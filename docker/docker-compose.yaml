@@ -1,0 +1,53 @@
+volumes:
+  portal_jota_postgres_data:
+    name: portal_jota_postgres_data
+  portal_jota_redis_data:
+    name: portal_jota_redis_data
+
+networks:
+  portal_jota_postgres_network:
+    driver: bridge
+  portal_jota_redis_network:
+    driver: bridge
+
+services:
+  postgres:
+    container_name: portal_jota_postgres
+    image: postgres:17.4-alpine
+    env_file:
+      - postgres/postgres.env
+    volumes:
+    - portal_jota_postgres_data:/var/lib/postgresql/data
+    hostname: portal_jota_postgres
+    networks:
+      - portal_jota_postgres_network
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  redis:
+    container_name: portal_jota_redis
+    image: redis:8.0-rc1-alpine3.21
+    env_file:
+      - redis/redis.env
+    volumes:
+    - portal_jota_redis_data:/data
+    - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    - ./redis/entrypoint.sh:/entrypoint.sh
+    hostname: portal_jota_redis
+    networks:
+      - portal_jota_redis_network
+    ports:
+      - 6379:6379
+    entrypoint: ["/entrypoint.sh"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+
