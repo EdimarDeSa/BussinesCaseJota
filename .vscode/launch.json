@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "Depurador do Python: Django",
+            "type": "debugpy",
+            "request": "launch",
+            "args": [
+                "runserver",
+                "localhost:8001"
+            ],
+            "django": true,
+            "autoStartBrowser": true,
+            "cwd": "${workspaceFolder}/portal_jota",
+            "program": "manage.py",
+        }
+    ]
+}
