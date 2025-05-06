@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -42,9 +43,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "api_portal_jota.apps.ApiPortalJotaConfig",
+    # Third-party
     "rest_framework",
-    # "drf_spectacular",
+    "drf_spectacular",
+    "rest_framework_simplejwt",
+    # Local apps
+    "api_portal_jota.apps.ApiPortalJotaConfig",
 ]
 
 MIDDLEWARE = [
@@ -138,6 +142,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Rest Framework
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
 }
 
 SPECTACULAR_SETTINGS = {
@@ -146,3 +153,10 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "0.1.0",
     "SERVE_INCLUDE_SCHEMA": False,
 }
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
+
+AUTH_USER_MODEL = "api_portal_jota.UserSchema"
