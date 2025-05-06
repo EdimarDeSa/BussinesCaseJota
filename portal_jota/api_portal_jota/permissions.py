@@ -11,9 +11,17 @@ class IsAdmin(BasePermission):
     """
 
     def has_permission(self, request: Request, view: object) -> bool:
-        print(request.headers)
         user = request.user
         return user.is_authenticated and getattr(user, "role", None) == UserRoleEnum.ADMIN
+
+
+class IsSelfOrAdmin(BasePermission):
+    """
+    IsSelfOrAdmin Verifica se o usuário é admin de acordo com o role ou ele mesmo
+    """
+
+    def has_object_permission(self, request: Request, view: object, obj: object) -> bool:
+        return request.user == obj or request.user.role == UserRoleEnum.ADMIN
 
 
 class IsEditor(BasePermission):

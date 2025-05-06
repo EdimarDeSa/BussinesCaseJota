@@ -16,14 +16,12 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
 
-        user = UserSchema.objects.get(username=attrs["username"])
-
-        data["user_id"] = user.id
-        data["username"] = user.username
-        data["email"] = user.email
-        data["role"] = user.get_role_display()
-        data["id_user_plan"] = user.user_plan.id
-        data["plan"] = user.user_plan.get_plan_display()
+        data["user_id"] = self.user.id
+        data["username"] = self.user.username
+        data["email"] = self.user.email
+        data["role"] = self.user.get_role_display()
+        data["id_user_plan"] = self.user.user_plan.id
+        data["plan"] = self.user.user_plan.get_plan_display()
 
         return data
 

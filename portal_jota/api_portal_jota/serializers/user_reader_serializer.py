@@ -44,7 +44,7 @@ class UserReaderSerializer(serializers.ModelSerializer):
 
     @extend_schema_field(serializers.CharField())
     def get_plan(self, instance: UserSchema) -> str:
-        return instance.user_plan.plan.get_plan_display() if hasattr(instance, "user_plan") else None
+        return instance.user_plan.get_plan_display() if hasattr(instance, "user_plan") else None
 
     def update(self, instance: UserSchema, validated_data: dict) -> UserSchema:
         validated_data.pop("role", None)
