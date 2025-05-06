@@ -17,7 +17,7 @@ class UserReaderViewSet(viewsets.ModelViewSet):
         return UserSchema.objects.filter(id=self.request.user.id)
 
     def get_permissions(self):
-        if self.action == "list":
+        if self.action in ["list", "retrieve"]:
             return [IsAuthenticated(), IsSelfOrAdmin()]
 
         if self.action in ["update", "partial_update", "destroy"]:
