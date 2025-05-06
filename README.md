@@ -5,40 +5,14 @@ Bussines case para vaga de Desenvolvedor Backend na Jota
 - [BussinesCaseJota](#bussinescasejota)
   - [Indices](#indices)
   - [Descrição doBusiness Case](#descrição-dobusiness-case)
-    - [API stack](#api-stack)
     - [Features](#features)
+    - [API stack](#api-stack)
   - [Instalação e Execução em desenvolvimento](#instalação-e-execução-em-desenvolvimento)
   - [Instalação e Execução em produção](#instalação-e-execução-em-produção)
+  - [Melhorias e sugestões](#melhorias-e-sugestões)
 
 ## Descrição doBusiness Case
 Documentação oficial: [Google Doc](https://docs.google.com/document/d/1wHMVlLk6EfZcal1_PXjIADvGhna3oeX9JL3YKgsak7s/edit?tab=t.0#heading=h.twayzqjr36gk)
-
-### API stack
-- Linguagem principal: 
-  - Python
-- Frameworks: 
-  - Django
-  - Django Rest Framework
-- Database:
-  - PostgreSQL
-- Processamento e filas:
-  - Celery
-  - Redis
-- Autenticação:
-  - JWT
-- Arquitetura:
-  - Arquitetura orientada a eventos (Event Driven Architecture)
-  - Microserviços
-- CI/CD, infraestrutura e testes:
-  - Docker
-  - Docker Compose
-  - Git
-  - GiutHub
-  - GitHub Actions
-  - pytest
-- Documentação:
-  - Swagger
-  - README
 
 ### Features
 - CRUD para usuários (Admin, Editor, Leitor)
@@ -87,6 +61,40 @@ Documentação oficial: [Google Doc](https://docs.google.com/document/d/1wHMVlLk
 - Infraestrutura e Deploy
   - Criar Dockerfile e Docker Compose para facilitar o deploy.
 
+### API stack
+- Linguagem principal: 
+  - Python
+- Frameworks: 
+  - Django
+  - Django Rest Framework
+- Database:
+  - PostgreSQL
+- Processamento e filas:
+  - Celery
+  - Redis
+- Autenticação:
+  - JWT
+- Arquitetura:
+  - Arquitetura orientada a eventos (Event Driven Architecture)
+  - Microserviços
+- CI/CD, infraestrutura e testes:
+  - Docker
+  - Docker Compose
+  - Git
+  - GiutHub
+  - GitHub Actions
+  - pytest
+- Documentação:
+  - Swagger
+  - README
+
 ## Instalação e Execução em desenvolvimento
 
 ## Instalação e Execução em produção
+
+## Melhorias e sugestões
+- Melhorias de armazenamento
+  - Definir um armazenamento externo para imagens
+  - Definir tamanho máximo de arquivos de imagens
+  - Definir tamaho E tipo do conteúdo de notícias (Ex.: HTML, RICHTEXT, etc.)
+  - Definir um armazenamento externo para conteúdo de notícias
