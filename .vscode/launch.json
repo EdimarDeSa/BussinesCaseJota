@@ -9,7 +9,7 @@
                 "localhost:8001"
             ],
             "django": true,
-            "autoStartBrowser": true,
+            "autoStartBrowser": false,
             "cwd": "${workspaceFolder}/portal_jota",
             "program": "manage.py",
         }
