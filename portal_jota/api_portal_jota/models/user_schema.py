@@ -2,12 +2,14 @@ import uuid
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.transaction import atomic
 
 from ..enums.user_role_enum import UserRoleEnum
+from .user_plan_schema import UserPlanSchema
 
 
 class UserSchema(AbstractUser):
-    id_user = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, name="id")
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     role = models.CharField(max_length=1, choices=UserRoleEnum.choices, default=UserRoleEnum.READER)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -15,3 +17,15 @@ class UserSchema(AbstractUser):
 
     def __str__(self):
         return f"{self.get_full_name()}: <Role: {self.role}>"
+
+    @atomic
+    def save(self, *args, **kwargs) -> None:
+        is_new = self._state.adding
+
+        super().save(*args, **kwargs)
+
+        if is_new and self.role == UserRoleEnum.READER:
+            self._create_user_plan()
+
+    def _create_user_plan(self):
+        UserPlanSchema.objects.create(cd_user=self)

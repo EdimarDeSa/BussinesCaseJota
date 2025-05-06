@@ -32,12 +32,6 @@ class UserReaderSerializer(serializers.ModelSerializer):
 
             user: UserSchema = super().create(validated_data)
 
-            # Gera um plano inicial para o usuário
-            UserPlanSchema.objects.create(
-                cd_user=user,
-                plan=PlanEnum.JOTA_INFO,
-            )
-
             return user
         except Exception as e:
             raise serializers.ValidationError({"Erro ao criar usuário": str(e)})
@@ -54,7 +48,7 @@ class UserReaderSerializer(serializers.ModelSerializer):
 
         return super().update(instance, validated_data)
 
-    def to_representation(self, instance):
+    def to_representation(self, instance: UserSchema) -> dict:
         data = super().to_representation(instance)
         data["role"] = instance.get_role_display()
         data["plan"] = self.get_plan(instance)
