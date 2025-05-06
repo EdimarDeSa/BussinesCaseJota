@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from ..enums.user_role_enum import UserRoleEnum
 from ..models import UserSchema
-from ..permissions import IsSelfOrAdmin
+from ..permissions import IsAdmin, IsSelfOrAdmin
 from ..serializers.user_editor_serializer import UserEditorSerializer
 
 
@@ -17,6 +17,9 @@ class UserEditorViewSet(viewsets.ModelViewSet):
         return UserSchema.objects.filter(id=self.request.user.id)
 
     def get_permissions(self):
+        if self.action == "create":
+            return [IsAuthenticated(), IsAdmin()]
+
         if self.action in ["list", "retrieve"]:
             return [IsAuthenticated(), IsSelfOrAdmin()]
 

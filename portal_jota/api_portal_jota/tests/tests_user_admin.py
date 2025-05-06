@@ -2,16 +2,14 @@ from django.test import TestCase
 from faker import Faker
 from rest_framework.test import APIRequestFactory, force_authenticate
 
-from ..enums.plan_enum import PlanEnum
 from ..enums.user_role_enum import UserRoleEnum
 from ..serializers.user_admin_serializer import UserAdminSerializer
-from ..serializers.user_reader_serializer import UserReaderSerializer
-from ..views.user_reader_view import UserReaderViewSet
+from ..views.user_admin_view import UserAdminViewSet
 
 PASSWORD = "P@s5W0rd"
 
 
-class TestUserReader(TestCase):
+class TestUserAdmin(TestCase):
     def setUp(self):
         self.faker = Faker("pt_BR")
         self.user_1_data = {
@@ -32,9 +30,9 @@ class TestUserReader(TestCase):
             "password": self.faker.password(length=12),
         }
 
-        self.base_url = "/api/reader-user/"
+        self.base_url = "/api/admin-user/"
         self.factory = APIRequestFactory()
-        self.view = UserReaderViewSet.as_view(
+        self.view = UserAdminViewSet.as_view(
             {
                 "post": "create",
                 "get": "list",
@@ -43,12 +41,18 @@ class TestUserReader(TestCase):
                 "delete": "destroy",
             }
         )
-        self.user_serializer = UserReaderSerializer()
+        self.user_serializer = UserAdminSerializer()
 
     def test_user_creation_success(self):
+        user_admin = self.user_serializer.create(
+            {"username": self.faker.user_name(), "email": self.faker.email(), "password": PASSWORD}
+        )
+
         request = self.factory.post(self.base_url, self.user_1_data, format="json")
 
-        response = self.view(request)
+        force_authenticate(request, user=user_admin)
+
+        response = self.view(request, pk=str(user_admin.id))
 
         response.render()
 
@@ -58,8 +62,8 @@ class TestUserReader(TestCase):
         user = response.data
 
         self.assertEqual(user["email"], self.user_1_data["email"])
-        self.assertEqual(user["role"], UserRoleEnum.READER.label)
-        self.assertEqual(user["plan"], PlanEnum.JOTA_INFO.label)
+        self.assertEqual(user["role"], UserRoleEnum.ADMIN.label)
+        self.assertNotIn("plan", user)
 
     def test_user_update(self):
         user = self.user_serializer.create(self.user_1_data)
@@ -152,10 +156,9 @@ class TestUserReader(TestCase):
         user_data = user_list[0]
 
         self.assertEqual(user_data["email"], self.user_1_data["email"])
-        self.assertEqual(user_data["role"], UserRoleEnum.READER.label)
-        self.assertEqual(user_data["plan"], PlanEnum.JOTA_INFO.label)
+        self.assertEqual(user_data["role"], UserRoleEnum.ADMIN.label)
 
-    def test_get_user_list_from_reader_user(self):
+    def test_get_user_list_from_admin_user(self):
         user_1 = self.user_serializer.create(self.user_1_data)
         self.user_serializer.create(self.user_2_data)
 
@@ -175,13 +178,7 @@ class TestUserReader(TestCase):
 
         user_list = response.data
 
-        self.assertEqual(len(user_list), 1)
-
-        user_data = user_list[0]
-
-        self.assertEqual(user_data["email"], self.user_1_data["email"])
-        self.assertEqual(user_data["role"], UserRoleEnum.READER.label)
-        self.assertEqual(user_data["plan"], PlanEnum.JOTA_INFO.label)
+        self.assertEqual(len(user_list), 2)
 
     def test_get_user_list_from_admin_user(self):
         adm_serializer = UserAdminSerializer()
@@ -208,26 +205,4 @@ class TestUserReader(TestCase):
 
         user_list = response.data
 
-        self.assertEqual(len(user_list), 2)
-
-    def test_user_1_cant_update_user_2(self):
-        user_1 = self.user_serializer.create(self.user_1_data)
-        user_2 = self.user_serializer.create(self.user_2_data)
-
-        url = f"{self.base_url}{user_2.id}/"
-
-        request = self.factory.put(
-            url,
-            self.user_updates,
-            format="json",
-        )
-
-        force_authenticate(request, user=user_1)
-
-        response = self.view(request, pk=str(user_2.id))
-
-        response.render()
-
-        status_code = response.status_code
-
-        self.assertEqual(status_code, 404)
+        self.assertEqual(len(user_list), 3)

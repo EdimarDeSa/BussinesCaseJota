@@ -32,3 +32,8 @@ class UserAdminSerializer(serializers.ModelSerializer):
             validated_data["password"] = make_password(validated_data["password"])
 
         return super().update(instance, validated_data)
+
+    def to_representation(self, instance: UserSchema) -> dict:
+        data = super().to_representation(instance)
+        data["role"] = instance.get_role_display()
+        return data

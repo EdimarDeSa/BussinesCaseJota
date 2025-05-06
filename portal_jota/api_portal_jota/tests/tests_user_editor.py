@@ -2,16 +2,15 @@ from django.test import TestCase
 from faker import Faker
 from rest_framework.test import APIRequestFactory, force_authenticate
 
-from ..enums.plan_enum import PlanEnum
 from ..enums.user_role_enum import UserRoleEnum
 from ..serializers.user_admin_serializer import UserAdminSerializer
-from ..serializers.user_reader_serializer import UserReaderSerializer
-from ..views.user_reader_view import UserReaderViewSet
+from ..serializers.user_editor_serializer import UserEditorSerializer
+from ..views.user_editor_view import UserEditorViewSet
 
 PASSWORD = "P@s5W0rd"
 
 
-class TestUserReader(TestCase):
+class TestUserEditor(TestCase):
     def setUp(self):
         self.faker = Faker("pt_BR")
         self.user_1_data = {
@@ -32,9 +31,9 @@ class TestUserReader(TestCase):
             "password": self.faker.password(length=12),
         }
 
-        self.base_url = "/api/reader-user/"
+        self.base_url = "/api/editor-user/"
         self.factory = APIRequestFactory()
-        self.view = UserReaderViewSet.as_view(
+        self.view = UserEditorViewSet.as_view(
             {
                 "post": "create",
                 "get": "list",
@@ -43,12 +42,18 @@ class TestUserReader(TestCase):
                 "delete": "destroy",
             }
         )
-        self.user_serializer = UserReaderSerializer()
+        self.user_serializer = UserEditorSerializer()
 
     def test_user_creation_success(self):
+        user_adm = UserAdminSerializer().create(
+            {"username": self.faker.user_name(), "email": self.faker.email(), "password": PASSWORD}
+        )
+
         request = self.factory.post(self.base_url, self.user_1_data, format="json")
 
-        response = self.view(request)
+        force_authenticate(request, user=user_adm)
+
+        response = self.view(request, pk=str(user_adm.id))
 
         response.render()
 
@@ -58,8 +63,8 @@ class TestUserReader(TestCase):
         user = response.data
 
         self.assertEqual(user["email"], self.user_1_data["email"])
-        self.assertEqual(user["role"], UserRoleEnum.READER.label)
-        self.assertEqual(user["plan"], PlanEnum.JOTA_INFO.label)
+        self.assertEqual(user["role"], UserRoleEnum.EDITOR.label)
+        self.assertNotIn("plan", user)
 
     def test_user_update(self):
         user = self.user_serializer.create(self.user_1_data)
@@ -152,10 +157,9 @@ class TestUserReader(TestCase):
         user_data = user_list[0]
 
         self.assertEqual(user_data["email"], self.user_1_data["email"])
-        self.assertEqual(user_data["role"], UserRoleEnum.READER.label)
-        self.assertEqual(user_data["plan"], PlanEnum.JOTA_INFO.label)
+        self.assertEqual(user_data["role"], UserRoleEnum.EDITOR.label)
 
-    def test_get_user_list_from_reader_user(self):
+    def test_get_user_list_from_editor_user(self):
         user_1 = self.user_serializer.create(self.user_1_data)
         self.user_serializer.create(self.user_2_data)
 
@@ -180,8 +184,7 @@ class TestUserReader(TestCase):
         user_data = user_list[0]
 
         self.assertEqual(user_data["email"], self.user_1_data["email"])
-        self.assertEqual(user_data["role"], UserRoleEnum.READER.label)
-        self.assertEqual(user_data["plan"], PlanEnum.JOTA_INFO.label)
+        self.assertEqual(user_data["role"], UserRoleEnum.EDITOR.label)
 
     def test_get_user_list_from_admin_user(self):
         adm_serializer = UserAdminSerializer()
