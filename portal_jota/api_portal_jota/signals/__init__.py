@@ -1,0 +1,1 @@
+from .auto_gen_verticais import populate_verticals
