@@ -14,6 +14,7 @@ class NoticiaSchema(models.Model):
     titulo = models.CharField(max_length=50)
     subtitulo = models.CharField(max_length=100)
     imagem = models.ImageField(upload_to=get_upload_to, blank=True, null=True)
+    imagem_foi_processada = models.BooleanField(default=False)
     conteudo = models.TextField()
     data_publicacao = models.DateTimeField()
     autor = models.ForeignKey("UserSchema", on_delete=models.CASCADE, related_name="noticia")

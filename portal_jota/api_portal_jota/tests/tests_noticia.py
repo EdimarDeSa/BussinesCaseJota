@@ -264,7 +264,29 @@ class TestNoticia(TestCase):
         self.assertEqual(len(noticias), 16)
 
     def test_noticia_status_cant_be_updated(self):
-        self.assertTrue(True)
+        user_editor = self._create_user(self.user_editor_serializer)
+        noticia = self._register_noticia(user_editor, is_published=False)
+
+        url = f"{self.base_url}{noticia.id}/"
+
+        request = self.factory.patch(
+            url,
+            {"status": StatusNoticiaEnum.PUBLICADO},
+            format="json",
+        )
+
+        force_authenticate(request, user=user_editor)
+
+        response = self.view(request, pk=str(noticia.id))
+
+        response.render()
+
+        status_code = response.status_code
+
+        self.assertEqual(status_code, 200, response.data)
+
+        data = response.data
+        self.assertEqual(data["status"], StatusNoticiaEnum.RASCUNHO.label, data)
 
     def test_noticia_status_is_published_automatically_after_1_second(self):
         self.assertTrue(True)

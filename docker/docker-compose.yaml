@@ -3,11 +3,15 @@ volumes:
     name: portal_jota_postgres_data
   portal_jota_redis_data:
     name: portal_jota_redis_data
+  portal_jota_rabbitmq_data:
+    name: portal_jota_rabbitmq_data
 
 networks:
   portal_jota_postgres_network:
     driver: bridge
   portal_jota_redis_network:
+    driver: bridge
+  portal_jota_rabbitmq_network:
     driver: bridge
 
 services:
@@ -50,4 +54,21 @@ services:
       timeout: 5s
       retries: 3
 
-
+  rabbitmq:
+    container_name: portal_jota_rabbitmq
+    image: rabbitmq:4.1.0-management
+    env_file:
+      - rabbitmq/rabbitmq.env
+    volumes:
+      - portal_jota_rabbitmq_data:/var/lib/rabbitmq
+    hostname: portal_jota_rabbitmq
+    networks:
+      - portal_jota_rabbitmq_network
+    ports:
+      - 5672:5672
+      - 15672:15672
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
