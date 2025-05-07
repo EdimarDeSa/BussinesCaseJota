@@ -98,3 +98,9 @@ Documentação oficial: [Google Doc](https://docs.google.com/document/d/1wHMVlLk
   - Definir tamanho máximo de arquivos de imagens
   - Definir tamaho E tipo do conteúdo de notícias (Ex.: HTML, RICHTEXT, etc.)
   - Definir um armazenamento externo para conteúdo de notícias
+- Retorno das notícias
+  - Organizar priorizando as noitícias JOTA_PRO + data de publicação
+  - Organizar priorizando as noitícias JOTA_INFO + data de publicação
+  - Link para sugestão de leituras
+  - Reduzir as informações reotrnadas pela listagem de notícias
+  - Adicionar tabela para metadados de visualização e compartilhamento
