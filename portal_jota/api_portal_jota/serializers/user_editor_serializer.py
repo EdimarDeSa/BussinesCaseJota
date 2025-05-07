@@ -26,7 +26,6 @@ class UserEditorSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
     def update(self, instance: UserSchema, validated_data: dict) -> UserSchema:
-        validated_data.pop("role", None)
 
         if "password" in validated_data:
             validated_data["password"] = make_password(validated_data["password"])

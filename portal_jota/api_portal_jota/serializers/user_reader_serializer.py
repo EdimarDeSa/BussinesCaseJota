@@ -36,7 +36,6 @@ class UserReaderSerializer(serializers.ModelSerializer):
         return instance.user_plan.get_plan_display() if hasattr(instance, "user_plan") else None
 
     def update(self, instance: UserSchema, validated_data: dict) -> UserSchema:
-        validated_data.pop("role", None)
 
         if "password" in validated_data:
             validated_data["password"] = make_password(validated_data["password"])

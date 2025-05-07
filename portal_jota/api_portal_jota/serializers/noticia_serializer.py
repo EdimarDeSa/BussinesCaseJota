@@ -50,11 +50,6 @@ class NoticiaSerializer(serializers.ModelSerializer):
         noticia.verticais.set(verticais_objects)
         return noticia
 
-    def update(self, instance: NoticiaSchema, validated_data: dict) -> NoticiaSchema:
-        validated_data.pop("autor", None)
-        validated_data.pop("status", None)
-        return super().update(instance, validated_data)
-
     @extend_schema_field(serializers.CharField())
     def get_autor_username(self, instance: NoticiaSchema) -> str:
         return instance.autor.username

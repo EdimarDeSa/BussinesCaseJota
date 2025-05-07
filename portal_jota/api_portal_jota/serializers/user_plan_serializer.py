@@ -36,7 +36,6 @@ class UserPlanSerializer(serializers.ModelSerializer):
         return super().validate(attrs)
 
     def update(self, instance: UserPlanSchema, validated_data: dict) -> UserPlanSchema:
-        validated_data.pop("cd_user", None)
 
         verticais_data = validated_data.pop("verticais", None)
 
