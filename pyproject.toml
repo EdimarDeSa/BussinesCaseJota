@@ -16,6 +16,7 @@ dependencies = [
     "python-dotenv (>=1.1.0,<2.0.0)",
     "drf-spectacular (>=0.28.0,<0.29.0)",
     "djangorestframework-simplejwt[crypto] (>=5.5.0,<6.0.0)",
+    "pillow (>=11.2.1,<12.0.0)",
 ]
 
 
@@ -27,6 +28,5 @@ build-backend = "poetry.core.masonry.api"
 black = "^25.1.0"
 isort = "^6.0.1"
 mypy = "^1.15.0"
-pytest = "^8.3.5"
 faker = "^37.1.0"
 
