@@ -5,6 +5,7 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 from ..enums.plan_enum import PlanEnum
 from ..enums.user_role_enum import UserRoleEnum
 from ..enums.vertical_enum import VerticalEnum
+from ..models import UserSchema
 from ..serializers.user_admin_serializer import UserAdminSerializer
 from ..serializers.user_editor_serializer import UserEditorSerializer
 from ..serializers.user_plan_serializer import UserPlanSerializer
@@ -15,6 +16,16 @@ PASSWORD = "P@s5W0rd"
 
 
 class TestUserPlan(TestCase):
+    def _create_user(self, serializer) -> UserSchema:
+        return serializer.create(self._generate_user_data())
+
+    def _generate_user_data(self):
+        return {
+            "username": self.faker.user_name(),
+            "email": self.faker.email(),
+            "password": PASSWORD,
+        }
+
     def setUp(self):
         self.faker = Faker("pt_BR")
 
@@ -29,41 +40,14 @@ class TestUserPlan(TestCase):
         )
         self.plan_serializer = UserPlanSerializer()
 
-        self.user_reader = UserReaderSerializer().create(
-            {
-                "username": self.faker.user_name(),
-                "email": self.faker.email(),
-                "password": PASSWORD,
-            }
-        )
+        self.user_reader = self._create_user(UserReaderSerializer())
 
         user_reader_serializers = UserReaderSerializer()
-        self.user_readers = [
-            user_reader_serializers.create(
-                {
-                    "username": self.faker.user_name(),
-                    "email": self.faker.email(),
-                    "password": PASSWORD,
-                }
-            )
-            for _ in range(5)
-        ]
+        self.user_readers = [self._create_user(user_reader_serializers) for _ in range(5)]
 
-        self.user_editor = UserEditorSerializer().create(
-            {
-                "username": self.faker.user_name(),
-                "email": self.faker.email(),
-                "password": PASSWORD,
-            }
-        )
+        self.user_editor = self._create_user(UserEditorSerializer())
 
-        self.user_admin = UserAdminSerializer().create(
-            {
-                "username": self.faker.user_name(),
-                "email": self.faker.email(),
-                "password": PASSWORD,
-            }
-        )
+        self.user_admin = self._create_user(UserAdminSerializer())
 
     def test_user_plan_cant_be_created_manually(self):
         request = self.factory.post(self.base_url, {"plan": PlanEnum.JOTA_PRO.label}, format="json")

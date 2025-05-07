@@ -5,14 +5,18 @@ from django.db import models
 from ..enums.status_noticia_enum import StatusNoticiaEnum
 
 
+def get_upload_to(instance, filename):
+    return f"noticias/{instance.id}/{filename}"
+
+
 class NoticiaSchema(models.Model):
-    id_noticia = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, name="id")
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     titulo = models.CharField(max_length=50)
     subtitulo = models.CharField(max_length=100)
-    imagem = models.FileField(upload_to="noticias/{id_noticia}", blank=True, null=True)
+    imagem = models.ImageField(upload_to=get_upload_to, blank=True, null=True)
     conteudo = models.TextField()
-    data_publicacao = models.DateTimeField(auto_now_add=True)
-    autor = models.ForeignKey("UserSchema", on_delete=models.CASCADE, related_name="noticias")
+    data_publicacao = models.DateTimeField()
+    autor = models.ForeignKey("UserSchema", on_delete=models.CASCADE, related_name="noticia")
     status = models.CharField(max_length=1, choices=StatusNoticiaEnum.choices, default=StatusNoticiaEnum.RASCUNHO)
     is_pro = models.BooleanField(default=False)
     verticais = models.ManyToManyField("VerticalSchema")
@@ -21,4 +25,4 @@ class NoticiaSchema(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.titulo
+        return f"Noticia: {self.titulo} - {self.data_publicacao} - {self.autor.username}"

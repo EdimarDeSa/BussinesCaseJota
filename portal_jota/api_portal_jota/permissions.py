@@ -22,11 +22,16 @@ class IsSelfOrAdmin(BasePermission):
     IsSelfOrAdmin Verifica se o usuário é admin de acordo com o role ou ele mesmo
     """
 
-    def has_permission(self, request: Request, view: object) -> bool:
-        return request.user.is_authenticated
-
     def has_object_permission(self, request: Request, view: object, obj: object) -> bool:
         return request.user == obj or request.user.role == UserRoleEnum.ADMIN
+
+
+# Class que permite alterar/deletar noticias
+class CanEditNews(BasePermission):
+    def has_object_permission(self, request: Request, view: object, obj: object) -> bool:
+        is_admin = request.user.role == UserRoleEnum.ADMIN
+        is_autor = obj.autor == request.user
+        return any([is_admin, is_autor])
 
 
 class IsReaderOrdAdmin(BasePermission):
@@ -35,28 +40,21 @@ class IsReaderOrdAdmin(BasePermission):
     """
 
     def has_permission(self, request: Request, view: object) -> bool:
-        return request.user.is_authenticated and request.user.role in [UserRoleEnum.READER, UserRoleEnum.ADMIN]
+        is_auth = request.user.is_authenticated
+        has_role = request.user.role in [UserRoleEnum.READER, UserRoleEnum.ADMIN]
+        return all([is_auth, has_role])
 
     def has_object_permission(self, request: Request, view: object, obj: object) -> bool:
-        return request.user.role in [UserRoleEnum.READER, UserRoleEnum.ADMIN]
+        has_role = request.user.role in [UserRoleEnum.READER, UserRoleEnum.ADMIN]
+        return has_role
 
 
-class IsEditor(BasePermission):
+class IsEditorOrAdmin(BasePermission):
     """
     isEditor Verifica se o usuário é editor de acordo com o role
     """
 
     def has_permission(self, request: Request, view: object) -> bool:
-        user = request.user
-        return user.is_authenticated and getattr(user, "role", None) == UserRoleEnum.EDITOR
-
-
-class IsReaderPro(BasePermission):
-    """
-    isReaderPro Verifica se o usuário é editor de acordo com o role
-    """
-
-    def has_permission(self, request: Request, view: object) -> bool:
-        user = request.user
-        is_pro = user.user_plan.plan == PlanEnum.JOTA_PRO
-        return user.is_authenticated and getattr(user, "role", None) == UserRoleEnum.READER
+        is_auth = request.user.is_authenticated
+        has_role = request.user.role in [UserRoleEnum.EDITOR, UserRoleEnum.ADMIN]
+        return all([is_auth, has_role])

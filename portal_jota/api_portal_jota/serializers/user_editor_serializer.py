@@ -11,8 +11,8 @@ class UserEditorSerializer(serializers.ModelSerializer):
         fields = ["id", "username", "email", "password", "role", "created_at", "updated_at"]
         extra_kwargs = {
             "id": {"read_only": True},
-            "username": {"write_only": True},
-            "password": {"write_only": True},
+            "username": {"write_only": True, "required": True},
+            "password": {"write_only": True, "required": True, "style": {"input_type": "password"}},
             "role": {"read_only": True},
             "created_at": {"read_only": True},
             "updated_at": {"read_only": True},

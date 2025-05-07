@@ -25,16 +25,11 @@ class UserReaderSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data: dict) -> UserSchema:
-        try:
-            validated_data["password"] = make_password(validated_data["password"])
+        validated_data["password"] = make_password(validated_data["password"])
 
-            validated_data["role"] = UserRoleEnum.READER
+        validated_data["role"] = UserRoleEnum.READER
 
-            user: UserSchema = super().create(validated_data)
-
-            return user
-        except Exception as e:
-            raise serializers.ValidationError({"Erro ao criar usuário": str(e)})
+        return super().create(validated_data)
 
     @extend_schema_field(serializers.CharField())
     def get_plan(self, instance: UserSchema) -> str:

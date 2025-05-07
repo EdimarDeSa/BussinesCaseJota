@@ -16,7 +16,7 @@ class UserSchema(AbstractUser):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.get_full_name()}: <Role: {self.role}>"
+        return f"{self.username}: <Role: {self.role}>"
 
     @atomic
     def save(self, *args, **kwargs) -> None:
