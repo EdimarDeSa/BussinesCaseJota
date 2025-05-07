@@ -24,5 +24,10 @@ class NoticiaSchema(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # TODO: Criar campo para imagem processada
+    # TODO: Criar task para processamento de imagem
+    # TODO: Criar task para atualização de status
+    # TODO: Criar task para atualização de status
+
     def __str__(self):
         return f"Noticia: {self.titulo} - {self.data_publicacao} - {self.autor.username}"

@@ -16,7 +16,13 @@ class UserSchema(AbstractUser):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.username}: <Role: {self.role}>"
+        match self.role:
+            case UserRoleEnum.ADMIN:
+                return f"{self.username}: <Admin>"
+            case UserRoleEnum.EDITOR:
+                return f"{self.username}: <Editor>"
+            case UserRoleEnum.READER:
+                return f"{self.username}: <Role: {self.role}> - <Plan: {self.user_plan.plan} - Verticais: {self.user_plan.verticais.all()}>"
 
     @atomic
     def save(self, *args, **kwargs) -> None:

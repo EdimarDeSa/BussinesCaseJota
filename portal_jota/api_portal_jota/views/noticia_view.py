@@ -2,6 +2,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from ..enums.plan_enum import PlanEnum
+from ..enums.status_noticia_enum import StatusNoticiaEnum
 from ..enums.user_role_enum import UserRoleEnum
 from ..models import NoticiaSchema
 from ..permissions import CanEditNews, IsEditorOrAdmin
@@ -27,16 +28,21 @@ class NoticiaViewSet(viewsets.ModelViewSet):
                 return NoticiaSchema.objects.filter(autor=user.id)
 
             case UserRoleEnum.READER:
-                jota_info_noticias = NoticiaSchema.objects.filter(is_pro=False)
+                jota_info_noticias = NoticiaSchema.objects.filter(
+                    is_pro=False,
+                    status=StatusNoticiaEnum.PUBLICADO,
+                )
 
                 match self.request.user.user_plan.plan:
                     case PlanEnum.JOTA_INFO:
                         return jota_info_noticias
 
                     case PlanEnum.JOTA_PRO:
+                        user_verticais = user.user_plan.verticais.all()
                         jota_pro_noticias = NoticiaSchema.objects.filter(
                             is_pro=True,
-                            verticais__in=user.user_plan.verticais.all(),
+                            status=StatusNoticiaEnum.PUBLICADO,
+                            verticais__in=user_verticais,
                         ).distinct()
                         return jota_info_noticias.union(jota_pro_noticias)
 

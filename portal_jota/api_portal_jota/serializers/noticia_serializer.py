@@ -13,6 +13,7 @@ class NoticiaSerializer(serializers.ModelSerializer):
         write_only=True,
         help_text=f"Lista de verticais. Valores possíveis: {[v.value for v in VerticalEnum]}",
     )
+    imagem = serializers.FileField(required=False, write_only=True)
 
     class Meta:
         model = NoticiaSchema
@@ -34,7 +35,6 @@ class NoticiaSerializer(serializers.ModelSerializer):
             "id": {"read_only": True},
             "autor": {"read_only": True},
             "status": {"read_only": True},
-            "imagem": {"required": False},
             "created_at": {"read_only": True},
             "updated_at": {"read_only": True},
         }
