@@ -1,5 +1,7 @@
+import os
 from datetime import timedelta, timezone
 
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from faker import Faker
 from rest_framework.test import APIRequestFactory, force_authenticate
@@ -292,7 +294,40 @@ class TestNoticia(TestCase):
         self.assertTrue(True)
 
     def test_create_noticia_with_image(self):
-        self.assertTrue(True)
+        editor = self._create_user(self.user_editor_serializer)
+        img_bytes = self.faker.image(
+            size=(100, 100),
+            image_format="png",
+            hue="blue",
+            luminosity="bright",
+        )
+
+        image_file = SimpleUploadedFile(name="test_image.png", content=img_bytes, content_type="image/png")
+        noticia = self._generate_noticia_data(
+            editor,
+            image=image_file,
+        )
+
+        request = self.factory.post(self.base_url, noticia, format="multipart")
+
+        force_authenticate(request, user=editor)
+
+        response = self.view(request)
+
+        response.render()
+
+        status_code = response.status_code
+
+        self.assertEqual(status_code, 201, response.data)
+
+        updated_noticia = NoticiaSchema.objects.get(id=response.data["id"])
+
+        self.assertTrue(updated_noticia.imagem_foi_processada)
+        nome_imagem = updated_noticia.imagem.name.split("/")[-1]
+        self.assertEqual(nome_imagem, "test_image.webp")
+
+        os.remove(updated_noticia.imagem.path)
+        os.rmdir(updated_noticia.imagem.path.replace("test_image.webp", ""))
 
     def test_noticia_image_is_processed(self):
         self.assertTrue(True)
