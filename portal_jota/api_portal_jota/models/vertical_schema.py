@@ -7,7 +7,7 @@ class VerticalSchema(models.Model):
     name = models.CharField(max_length=25, unique=True)
     cod_categoria = models.CharField(max_length=1, choices=VerticalEnum.choices, unique=True)
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):

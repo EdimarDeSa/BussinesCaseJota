@@ -11,7 +11,7 @@ class UserPlanSchema(models.Model):
     cd_user = models.OneToOneField("UserSchema", on_delete=models.CASCADE, related_name="user_plan")
     verticais = models.ManyToManyField("VerticalSchema", blank=True)
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):

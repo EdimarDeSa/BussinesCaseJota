@@ -5,6 +5,7 @@ from django.db.models import FileField
 from django.db.transaction import atomic
 from django.utils import timezone
 
+from ..enums.email_type_enum import EmailTypeEnum
 from ..enums.status_noticia_enum import StatusNoticiaEnum
 from ..enums.status_noticia_imagem_enum import StatusNoticiaImagemEnum
 
@@ -39,7 +40,7 @@ class NoticiaSchema(models.Model):
     is_pro = models.BooleanField(default=False)
     verticais = models.ManyToManyField("VerticalSchema")
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -64,8 +65,12 @@ class NoticiaSchema(models.Model):
                 self.data_publicacao > agora,
             ]
         ):
+            from ..tasks.send_email import send_email
+
             self.status = StatusNoticiaEnum.RASCUNHO
             self.save(update_fields=["status"])
+
+            send_email.delay({"email_type": EmailTypeEnum.NOTICIA_DESATIVADA})
 
         imagem_alterada = "imagem" in update_fields
 
@@ -78,8 +83,8 @@ class NoticiaSchema(models.Model):
             if get_image_extension(self.imagem) != "webp":
                 from ..tasks.process_image import process_image
 
-                self.status_imagem = StatusNoticiaImagemEnum.PENDENTE
                 process_image.delay(str(self.id))
 
                 if not is_new:
-                    self.save(update_fields=["imagem_foi_processada"])
+                    self.status_imagem = StatusNoticiaImagemEnum.PENDENTE
+                    self.save(update_fields=["status_imagem"])

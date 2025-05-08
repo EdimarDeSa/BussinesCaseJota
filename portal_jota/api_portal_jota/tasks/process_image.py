@@ -5,11 +5,14 @@ from celery import shared_task
 from django.core.files.uploadedfile import SimpleUploadedFile
 from PIL import Image
 
+from ..enums.email_type_enum import EmailTypeEnum
 from ..enums.status_noticia_imagem_enum import StatusNoticiaImagemEnum
+from ..types import NoticiaId
+from .send_email import send_email
 
 
 @shared_task
-def process_image(noticia_id: str):
+def process_image(noticia_id: NoticiaId) -> str:
     from ..models import NoticiaSchema
 
     noticia = NoticiaSchema.objects.get(id=noticia_id)
@@ -38,9 +41,24 @@ def process_image(noticia_id: str):
 
         noticia.status_imagem = StatusNoticiaImagemEnum.OK
         noticia.save(update_fields=["imagem", "status_imagem"])
+
+        send_email.delay(
+            {
+                "email_type": EmailTypeEnum.IMAGEM_PROCESSADA,
+                "news_id": str(noticia.id),
+            }
+        )
+
         return "Done"
 
     except Exception as e:
         noticia.status_imagem = StatusNoticiaImagemEnum.ERRO_IMAGEM
         noticia.save(update_fields=["status_imagem"])
+
+        send_email.delay(
+            {
+                "email_type": EmailTypeEnum.ERRO_IMAGEM,
+                "news_id": str(noticia.id),
+            }
+        )
         raise e
