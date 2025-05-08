@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 
 from ..enums.plan_enum import PlanEnum
@@ -11,6 +12,7 @@ from ..serializers.noticia_serializer import NoticiaSerializer
 
 class NoticiaViewSet(viewsets.ModelViewSet):
     serializer_class = NoticiaSerializer
+    parser_classes = [MultiPartParser]
 
     def get_queryset(self):
         """
