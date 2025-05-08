@@ -14,6 +14,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+from celery.schedules import crontab
 from dotenv import load_dotenv
 
 load_dotenv(".env")
@@ -186,3 +187,11 @@ CELERY_TASK_TIME_LIMIT = 120
 CELERY_TASK_MAX_RETRIES = 3
 CELERY_TASK_ALWAYS_EAGER = DEBUG
 CELERY_TASK_EAGER_PROPAGATES = DEBUG
+
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+CELERY_BEAT_SCHEDULE = {
+    "publicar_noticia": {
+        "task": "api_portal_jota.tasks.publicar_noticia.publicar_noticia",
+        "schedule": timedelta(seconds=5) if DEBUG else crontab("* * */1 * *"),
+    },
+}
