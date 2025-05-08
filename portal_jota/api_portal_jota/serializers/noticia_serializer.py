@@ -1,9 +1,10 @@
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
-from ..enums.plan_enum import PlanEnum
+from ..enums.status_noticia_imagem_enum import StatusNoticiaImagemEnum
 from ..enums.vertical_enum import VerticalEnum
 from ..models import NoticiaSchema, VerticalSchema
+from ..tasks.process_image import process_image
 
 
 class NoticiaSerializer(serializers.ModelSerializer):
@@ -13,7 +14,6 @@ class NoticiaSerializer(serializers.ModelSerializer):
         write_only=True,
         help_text=f"Lista de verticais. Valores possíveis: {[v.value for v in VerticalEnum]}",
     )
-    imagem = serializers.FileField(required=False, write_only=True)
 
     class Meta:
         model = NoticiaSchema
@@ -22,6 +22,7 @@ class NoticiaSerializer(serializers.ModelSerializer):
             "titulo",
             "subtitulo",
             "imagem",
+            "status_imagem",
             "conteudo",
             "data_publicacao",
             "autor",
@@ -35,16 +36,22 @@ class NoticiaSerializer(serializers.ModelSerializer):
             "id": {"read_only": True},
             "autor": {"read_only": True},
             "status": {"read_only": True},
+            "imagem": {"write_only": True},
+            "status_imagem": {"read_only": True},
             "created_at": {"read_only": True},
             "updated_at": {"read_only": True},
         }
 
     def create(self, validated_data):
         verticais = validated_data.pop("verticais")
+        # imagem = validated_data.pop("imagem")
 
         validated_data["autor"] = self.context["request"].user
 
         noticia = super().create(validated_data)
+
+        # if imagem:
+        #     process_image.delay(str(noticia.id))
 
         verticais_objects = VerticalSchema.objects.filter(name__in=verticais)
         noticia.verticais.set(verticais_objects)
@@ -64,4 +71,8 @@ class NoticiaSerializer(serializers.ModelSerializer):
         data["autor"] = self.get_autor_username(instance)
         data["status"] = instance.get_status_display()
         data["verticais"] = [v.name for v in instance.verticais.all()]
+
+        if data["status_imagem"] == StatusNoticiaImagemEnum.OK.label:
+            data["imagem"] = instance.imagem.url
+
         return data

@@ -8,6 +8,7 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 
 from ..enums.plan_enum import PlanEnum
 from ..enums.status_noticia_enum import StatusNoticiaEnum
+from ..enums.status_noticia_imagem_enum import StatusNoticiaImagemEnum
 from ..enums.vertical_enum import VerticalEnum
 from ..models import NoticiaSchema, UserPlanSchema, UserSchema, VerticalSchema
 from ..serializers.noticia_serializer import NoticiaSerializer
@@ -322,7 +323,7 @@ class TestNoticia(TestCase):
 
         updated_noticia = NoticiaSchema.objects.get(id=response.data["id"])
 
-        self.assertTrue(updated_noticia.imagem_foi_processada)
+        self.assertEqual(updated_noticia.status_imagem, StatusNoticiaImagemEnum.OK, updated_noticia.status_imagem)
         nome_imagem = updated_noticia.imagem.name.split("/")[-1]
         self.assertEqual(nome_imagem, "test_image.webp")
 
