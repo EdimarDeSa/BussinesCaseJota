@@ -28,7 +28,7 @@ Documentação oficial: [Google Doc](https://docs.google.com/document/d/1wHMVlLk
 | Definir um plano de acesso (JOTA Info, JOTA Pro) | **OK** |
 | Categorizar notícias dentro das verticais <br> (Poder, Tributos, Saúde, Energia e Trabalhista) | **OK** |
 | Definir a relação do cliente com o plano x Vertical <br> para notícias restritas a clientes PRO | **OK** |
-| Autenticação JWT e Perfis de Usuários | **OK**  |
+| Autenticação JWT | **OK**  |
 | Banco de Dados (Postgres ou MySQL) | **OK** - Postgres |
 | Arquitetura e Processamento Assíncrono | **OK** |
 | Testes Automatizados e CI/CD | **OK** |
@@ -40,6 +40,8 @@ Documentação oficial: [Google Doc](https://docs.google.com/document/d/1wHMVlLk
 | Implementação de testes | Em desenvolvimento |
 | Implementação de Docker | Em desenvolvimento |
 | Implementação de Docker Compose | Em desenvolvimento |
+| --- | --- |
+| **Status global** | **EM REVISÃO** |
 
 ### API stack
 - Linguagem principal: 
