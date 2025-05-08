@@ -1,9 +1,9 @@
-from api_portal_jota.models import UserSchema
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
+
+from ..models import UserSchema
 
 
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+class TokenSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user: UserSchema):
         token = super().get_token(user)
@@ -24,7 +24,3 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data["plan"] = self.user.user_plan.get_plan_display()
 
         return data
-
-
-class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = CustomTokenObtainPairSerializer
