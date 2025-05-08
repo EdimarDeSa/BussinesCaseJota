@@ -1,8 +1,9 @@
 import os
-from datetime import timedelta, timezone
+from datetime import timedelta
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
+from django.utils import timezone
 from faker import Faker
 from rest_framework.test import APIRequestFactory, force_authenticate
 
@@ -15,6 +16,7 @@ from ..serializers.noticia_serializer import NoticiaSerializer
 from ..serializers.user_admin_serializer import UserAdminSerializer
 from ..serializers.user_editor_serializer import UserEditorSerializer
 from ..serializers.user_reader_serializer import UserReaderSerializer
+from ..tasks.publicar_noticia import publicar_noticia
 from ..views.noticia_view import NoticiaViewSet
 
 PASSWORD = "P@s5W0rd"
@@ -36,16 +38,19 @@ class TestNoticia(TestCase):
             verticais = self.faker.random_choices(
                 elements=VerticalEnum.labels, length=self.faker.random_int(min=1, max=3)
             )
+
+        if not is_published:
+            data_publicacao = timezone.now()
+        else:
+            data_publicacao = self.faker.date_time_ad(
+                start_datetime="+1s", end_datetime="+30s", tzinfo=timezone.get_current_timezone()
+            )
         return {
             "titulo": self.faker.sentence(nb_words=3),
             "subtitulo": self.faker.sentence(nb_words=5),
             "imagem": image,
             "conteudo": self.faker.text(),
-            "data_publicacao": self.faker.date_time_ad(
-                start_datetime="+1m" if not is_published else "-5m",
-                end_datetime="+5m" if not is_published else "-1m",
-                tzinfo=timezone(timedelta(hours=-3)),
-            ),
+            "data_publicacao": data_publicacao,
             "is_pro": is_pro,
             "verticais": verticais,
         }
@@ -292,7 +297,28 @@ class TestNoticia(TestCase):
         self.assertEqual(data["status"], StatusNoticiaEnum.RASCUNHO.label, data)
 
     def test_noticia_status_is_published_automatically_after_1_second(self):
-        self.assertTrue(True)
+        editor = self._create_user(self.user_editor_serializer)
+        noticia = self._register_noticia(editor, is_published=False)
+
+        self.assertEqual(noticia.status, StatusNoticiaEnum.RASCUNHO.value)
+
+        publicar_noticia()
+        noticia.refresh_from_db()
+
+        self.assertEqual(noticia.status, StatusNoticiaEnum.PUBLICADO.value, noticia.status)
+
+    def test_noticia_status_is_changed_to_rascunho_after_publicado(self):
+        editor = self._create_user(self.user_editor_serializer)
+        noticia = self._register_noticia(editor, is_published=True)
+
+        self.assertEqual(noticia.status, StatusNoticiaEnum.PUBLICADO.value)
+
+        noticia.data_publicacao = timezone.now() + timedelta(days=1)
+        noticia.save(update_fields=["data_publicacao"])
+
+        noticia.refresh_from_db()
+
+        self.assertEqual(noticia.status, StatusNoticiaEnum.RASCUNHO.value, noticia.status)
 
     def test_create_noticia_with_image(self):
         editor = self._create_user(self.user_editor_serializer)
@@ -329,6 +355,3 @@ class TestNoticia(TestCase):
 
         os.remove(updated_noticia.imagem.path)
         os.rmdir(updated_noticia.imagem.path.replace("test_image.webp", ""))
-
-    def test_noticia_image_is_processed(self):
-        self.assertTrue(True)

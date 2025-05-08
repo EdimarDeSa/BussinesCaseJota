@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 from django.db.models import FileField
 from django.db.transaction import atomic
+from django.utils import timezone
 
 from ..enums.status_noticia_enum import StatusNoticiaEnum
 from ..enums.status_noticia_imagem_enum import StatusNoticiaImagemEnum
@@ -41,8 +42,6 @@ class NoticiaSchema(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # TODO: Criar task para atualização de status
-
     def __str__(self):
         return f"Noticia: {self.titulo} - {self.data_publicacao} - {self.autor.username}"
 
@@ -53,7 +52,29 @@ class NoticiaSchema(models.Model):
 
         super().save(*args, **kwargs)
 
-        if (is_new and has_image) or (not is_new and "imagem" in kwargs.get("update_fields", [])):
+        agora = timezone.now()
+
+        update_fields = kwargs.get("update_fields", [])
+
+        if all(
+            [
+                not is_new,
+                self.status == StatusNoticiaEnum.PUBLICADO,
+                "data_publicacao" in update_fields,
+                self.data_publicacao > agora,
+            ]
+        ):
+            self.status = StatusNoticiaEnum.RASCUNHO
+            self.save(update_fields=["status"])
+
+        imagem_alterada = "imagem" in update_fields
+
+        if any(
+            [
+                all([is_new, has_image]),
+                all([not is_new, imagem_alterada]),
+            ]
+        ):
             if get_image_extension(self.imagem) != "webp":
                 from ..tasks.process_image import process_image
 
