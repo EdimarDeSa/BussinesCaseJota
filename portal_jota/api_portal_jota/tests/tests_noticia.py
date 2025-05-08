@@ -33,7 +33,7 @@ class TestNoticia(TestCase):
             "password": PASSWORD,
         }
 
-    def _generate_noticia_data(self, is_published=True, is_pro=False, verticais=None, image=None):
+    def _generate_noticia_data(self, is_published=True, is_pro=False, verticais=None, image=""):
         if verticais is None:
             verticais = self.faker.random_choices(
                 elements=VerticalEnum.labels, length=self.faker.random_int(min=1, max=3)
@@ -74,7 +74,7 @@ class TestNoticia(TestCase):
         is_published=True,
         is_pro=False,
         verticais=None,
-        image=None,
+        image="",
     ) -> NoticiaSchema:
         noticia_data = self._generate_noticia_data(is_published, is_pro, verticais, image)
         noticia_data.update({"autor": user_editor})
@@ -114,7 +114,7 @@ class TestNoticia(TestCase):
 
     def test_user_reader_cant_create_noticia(self):
         user_jota_info = self._generate_user_jota_info()
-        request = self.factory.post(self.base_url, self._generate_noticia_data(), format="json")
+        request = self.factory.post(self.base_url, self._generate_noticia_data(), format="multipart")
 
         force_authenticate(request, user=user_jota_info)
 
@@ -128,7 +128,7 @@ class TestNoticia(TestCase):
         user_editor = self._create_user(self.user_editor_serializer)
         noticia_data = self._generate_noticia_data()
 
-        request = self.factory.post(self.base_url, noticia_data, format="json")
+        request = self.factory.post(self.base_url, noticia_data, format="multipart")
 
         force_authenticate(request, user=user_editor)
 
@@ -181,7 +181,7 @@ class TestNoticia(TestCase):
         request = self.factory.patch(
             url,
             noticia_user_editor_1_updates,
-            format="json",
+            format="multipart",
         )
 
         force_authenticate(request, user=user_editor_1)
@@ -280,7 +280,7 @@ class TestNoticia(TestCase):
         request = self.factory.patch(
             url,
             {"status": StatusNoticiaEnum.PUBLICADO},
-            format="json",
+            format="multipart",
         )
 
         force_authenticate(request, user=user_editor)
