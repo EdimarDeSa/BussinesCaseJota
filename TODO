@@ -1,3 +1,4 @@
 # TODO: Escrever Docker file para webserver
 # TODO: Escrever Docker file para celery worker
 # TODO: Escrever Docker file para celery beat worker
+# REVIEW: Revisar features e regras de negócio solicitadas
