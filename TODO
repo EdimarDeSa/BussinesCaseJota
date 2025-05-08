@@ -1,0 +1,3 @@
+# TODO: Escrever Docker file para webserver
+# TODO: Escrever Docker file para celery worker
+# TODO: Escrever Docker file para celery beat worker
