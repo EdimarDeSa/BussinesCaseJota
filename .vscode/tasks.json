@@ -1,0 +1,38 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "docker-compose",
+            "label": "docker-compose up",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "dockerCompose": {
+                "up": {
+                    "detached": true,
+                    "build": true,
+                    "services": ["redis", "postgres", "rabbitmq"],
+                    "healthcheck": true
+                },
+                "files": [
+                    "${workspaceFolder}/docker/docker-compose.yaml"
+                ]
+            }
+        },
+        {
+            "type": "docker-compose",
+            "label": "docker-compose down",
+            "group": "test",
+            "dockerCompose": {
+                "down": {
+                    "remove_orphans": true,
+                    "removeVolumes": true
+                },
+                "files": [
+                    "${workspaceFolder}/docker/docker-compose.yaml"
+                ]
+            }
+        },
+    ]
+}

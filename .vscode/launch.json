@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "Depurador do Python: Django",
+            "name": "Run server",
             "type": "debugpy",
             "request": "launch",
             "args": [
@@ -12,6 +12,22 @@
             "autoStartBrowser": false,
             "cwd": "${workspaceFolder}/portal_jota",
             "program": "manage.py",
+            "preLaunchTask": "docker-compose up",
+            "postDebugTask": "docker-compose down"
+        },
+        {
+            "name": "Run django tests",
+            "type": "debugpy",
+            "request": "launch",
+            "args": [
+                "test"
+            ],
+            "django": true,
+            "autoStartBrowser": false,
+            "cwd": "${workspaceFolder}/portal_jota",
+            "program": "manage.py",
+            "preLaunchTask": "docker-compose up",
+            "postDebugTask": "docker-compose down"
         }
     ]
 }
