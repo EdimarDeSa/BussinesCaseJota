@@ -67,6 +67,9 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+    depends_on:
+      redis:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "status"]
       interval: 30s
