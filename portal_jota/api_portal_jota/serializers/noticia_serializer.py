@@ -4,7 +4,6 @@ from rest_framework import serializers
 from ..enums.status_noticia_imagem_enum import StatusNoticiaImagemEnum
 from ..enums.vertical_enum import VerticalEnum
 from ..models import NoticiaSchema, VerticalSchema
-from ..tasks.process_image import process_image
 
 
 class NoticiaSerializer(serializers.ModelSerializer):
