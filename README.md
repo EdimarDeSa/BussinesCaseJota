@@ -8,6 +8,8 @@ Bussines case para vaga de Desenvolvedor Backend na Jota
     - [Features](#features)
     - [API stack](#api-stack)
   - [Instalação e Execução em desenvolvimento](#instalação-e-execução-em-desenvolvimento)
+    - [Requisitos](#requisitos)
+    - [Instalação](#instalação)
   - [Instalação e Execução em produção](#instalação-e-execução-em-produção)
   - [Melhorias e sugestões](#melhorias-e-sugestões)
 
@@ -89,6 +91,91 @@ Documentação oficial: [Google Doc](https://docs.google.com/document/d/1wHMVlLk
   - README
 
 ## Instalação e Execução em desenvolvimento
+
+### Requisitos
+- Python 3.11
+- Poetry >= 2.1.2
+- Docker >= 28.0.4, build b8034c0
+- Docker Compose >= v2.34.0
+
+### Instalação
+- Baixar o repositório do projeto
+```bash
+  git clone https://github.com/EdimarDeSa/BussinesCaseJota
+
+  cd BussinesCaseJota
+```
+
+- Iniciar o ambiente com o poetry e instalar dependências
+```bash
+  $(poetry env activate)
+
+  poetry install --no-root
+```
+
+- Criar os arquivos .env em cada pasta do projeto
+  - ./portal_jota/.env
+    - SECRET_KEY
+    - DEBUG
+    - ALLOWED_HOSTS
+    - POSTGRES_USER
+    - POSTGRES_PASSWORD
+    - POSTGRES_DB
+    - POSTGRES_HOST
+    - POSTGRES_PORT
+    - REDIS_HOST
+    - REDIS_PORT
+    - REDIS_PASSWORD
+    - REDIS_USER
+    - RABBITMQ_DEFAULT_USER
+    - RABBITMQ_DEFAULT_PASS
+    - RABBITMQ_HOST
+    - RABBITMQ_PORT
+
+  - ./docker/postgres/postgres.env
+    - POSTGRES_USER
+    - POSTGRES_PASSWORD
+    - POSTGRES_DB
+
+  - ./docker/redis/redis.env
+    - REDIS_PASSWORD
+    - REDIS_PORT
+    - REDIS_USER
+
+  - ./docker/rabbitmq/rabbitmq.env
+    - RABBITMQ_DEFAULT_USER
+    - RABBITMQ_DEFAULT_PASS
+
+Sugestão para criação das senhas:
+```python
+  from django.core.management.utils import get_random_secret_key
+  print(get_random_secret_key())
+
+  from secrets import token_urlsafe
+  print(token_urlsafe(64))
+```
+
+- Iniciar o ambiente com o docker-compose
+```bash
+  docker compose -f docker/docker-compose.yaml up -d postgres redis rabbitmq
+```	
+ou para docker compose < 2.0
+```bash
+  docker-compose -f docker/docker-compose.yaml up -d postgres redis rabbitmq
+```	
+
+- Realizar testes
+```bash
+  cd portal_jota
+
+  python manage.py test
+```
+
+- Iniciar webserver
+```bash
+  python manage.py makemigrations && python manage.py migrate
+  python manage.py runserver
+```
 
 ## Instalação e Execução em produção
 
