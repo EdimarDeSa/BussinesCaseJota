@@ -1,5 +1,6 @@
 import os
 from datetime import timedelta
+from typing import Any
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
@@ -23,17 +24,23 @@ PASSWORD = "P@s5W0rd"
 
 
 class TestNoticia(TestCase):
-    def _create_user(self, serializer) -> UserSchema:
+    def _create_user(self, serializer: Any) -> UserSchema:
         return serializer.create(self._generate_user_data())
 
-    def _generate_user_data(self):
+    def _generate_user_data(self) -> dict[str, str]:
         return {
             "username": self.faker.user_name(),
             "email": self.faker.email(),
             "password": PASSWORD,
         }
 
-    def _generate_noticia_data(self, is_published=True, is_pro=False, verticais=None, image=""):
+    def _generate_noticia_data(
+        self,
+        is_published: bool = True,
+        is_pro: bool = False,
+        verticais: list | None = None,
+        image: str = "",
+    ) -> dict[str, Any]:
         if verticais is None:
             verticais = self.faker.random_choices(
                 elements=VerticalEnum.labels, length=self.faker.random_int(min=1, max=3)
@@ -70,11 +77,11 @@ class TestNoticia(TestCase):
 
     def _register_noticia(
         self,
-        user_editor,
-        is_published=True,
-        is_pro=False,
-        verticais=None,
-        image="",
+        user_editor: UserSchema,
+        is_published: bool = True,
+        is_pro: bool = False,
+        verticais: list | None = None,
+        image: str = "",
     ) -> NoticiaSchema:
         noticia_data = self._generate_noticia_data(is_published, is_pro, verticais, image)
         noticia_data.update({"autor": user_editor})
@@ -90,7 +97,8 @@ class TestNoticia(TestCase):
 
         return noticia
 
-    def setUp(self):
+    def setUp(self) -> None:
+
         self.faker = Faker("pt_BR")
 
         self.base_url = "/api/noticia/"
@@ -112,7 +120,7 @@ class TestNoticia(TestCase):
 
         self.user_admin = self._create_user(UserAdminSerializer())
 
-    def test_user_reader_cant_create_noticia(self):
+    def test_user_reader_cant_create_noticia(self) -> None:
         user_jota_info = self._generate_user_jota_info()
         request = self.factory.post(self.base_url, self._generate_noticia_data(), format="multipart")
 
@@ -124,7 +132,7 @@ class TestNoticia(TestCase):
         status_code = response.status_code
         self.assertEqual(status_code, 403)
 
-    def test_user_editor_can_create_noticia_whitout_image(self):
+    def test_user_editor_can_create_noticia_whitout_image(self) -> None:
         user_editor = self._create_user(self.user_editor_serializer)
         noticia_data = self._generate_noticia_data()
 
@@ -143,7 +151,7 @@ class TestNoticia(TestCase):
         self.assertEqual(noticia["autor_username"], user_editor.username)
         self.assertEqual(noticia["autor_id"], str(user_editor.id))
 
-    def test_user_editor_can_list_only_his_noticias(self):
+    def test_user_editor_can_list_only_his_noticias(self) -> None:
         user_editor_1 = self._create_user(self.user_editor_serializer)
         noticia_user_editor_1 = self._register_noticia(user_editor_1)
 
@@ -168,7 +176,7 @@ class TestNoticia(TestCase):
         self.assertEqual(noticia["id"], str(noticia_user_editor_1.id))
         self.assertEqual(noticia["autor_id"], str(noticia_user_editor_1.autor.id))
 
-    def test_user_editor_can_update_his_noticias(self):
+    def test_user_editor_can_update_his_noticias(self) -> None:
         user_editor_1 = self._create_user(self.user_editor_serializer)
         noticia_user_editor_1 = self._register_noticia(user_editor_1)
         noticia_user_editor_1_updates = {
@@ -198,7 +206,7 @@ class TestNoticia(TestCase):
         self.assertEqual(noticia_data["titulo"], noticia_user_editor_1_updates["titulo"])
         self.assertEqual(noticia_data["subtitulo"], noticia_user_editor_1_updates["subtitulo"])
 
-    def test_user_editor_can_delete_his_noticias(self):
+    def test_user_editor_can_delete_his_noticias(self) -> None:
         user_editor_1 = self._create_user(self.user_editor_serializer)
         noticia_user_editor_1 = self._register_noticia(user_editor_1)
 
@@ -216,7 +224,7 @@ class TestNoticia(TestCase):
 
         self.assertEqual(status_code, 204)
 
-    def test_user_reader_jota_info_can_list_only_jota_info_noticias(self):
+    def test_user_reader_jota_info_can_list_only_jota_info_noticias(self) -> None:
         for _ in range(2):
             user_editor = self._create_user(self.user_editor_serializer)
             [self._register_noticia(user_editor) for _ in range(5)]
@@ -238,7 +246,7 @@ class TestNoticia(TestCase):
 
         self.assertEqual(len(noticias), 10)
 
-    def test_user_reader_jota_pro_can_list_all_noticias_filtered_by_his_verticais(self):
+    def test_user_reader_jota_pro_can_list_all_noticias_filtered_by_his_verticais(self) -> None:
         for _ in range(2):
             user_editor = self._create_user(self.user_editor_serializer)
             [self._register_noticia(user_editor) for _ in range(5)]
@@ -271,7 +279,7 @@ class TestNoticia(TestCase):
 
         self.assertEqual(len(noticias), 16)
 
-    def test_noticia_status_cant_be_updated(self):
+    def test_noticia_status_cant_be_updated(self) -> None:
         user_editor = self._create_user(self.user_editor_serializer)
         noticia = self._register_noticia(user_editor, is_published=False)
 
@@ -296,7 +304,7 @@ class TestNoticia(TestCase):
         data = response.data
         self.assertEqual(data["status"], StatusNoticiaEnum.RASCUNHO.label, data)
 
-    def test_noticia_status_is_published_automatically_after_1_second(self):
+    def test_noticia_status_is_published_automatically_after_1_second(self) -> None:
         editor = self._create_user(self.user_editor_serializer)
         noticia = self._register_noticia(editor, is_published=False)
 
@@ -307,7 +315,7 @@ class TestNoticia(TestCase):
 
         self.assertEqual(noticia.status, StatusNoticiaEnum.PUBLICADO.value, noticia.status)
 
-    def test_noticia_status_is_changed_to_rascunho_after_publicado(self):
+    def test_noticia_status_is_changed_to_rascunho_after_publicado(self) -> None:
         editor = self._create_user(self.user_editor_serializer)
         noticia = self._register_noticia(editor, is_published=True)
 
@@ -320,7 +328,7 @@ class TestNoticia(TestCase):
 
         self.assertEqual(noticia.status, StatusNoticiaEnum.RASCUNHO.value, noticia.status)
 
-    def test_create_noticia_with_image(self):
+    def test_create_noticia_with_image(self) -> None:
         editor = self._create_user(self.user_editor_serializer)
         img_bytes = self.faker.image(
             size=(100, 100),

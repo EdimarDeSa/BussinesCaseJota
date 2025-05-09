@@ -1,7 +1,9 @@
+from typing import Any
+
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import OpenApiParameter, extend_schema
+from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from ..enums.user_role_enum import UserRoleEnum
 from ..models import UserSchema
@@ -9,30 +11,34 @@ from ..permissions import IsSelfOrAdmin
 from ..serializers.user_reader_serializer import UserReaderSerializer
 
 
-@extend_schema(
-    parameters=[
-        OpenApiParameter(
-            name="id",
-            location=OpenApiParameter.PATH,
-            type=OpenApiTypes.UUID,
-            description="ID do usuário",
-        )
-    ]
+@extend_schema_view(
+    retrieve=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                location=OpenApiParameter.PATH,
+                type=OpenApiTypes.UUID,
+                description="ID do usuário",
+            )
+        ]
+    )
 )
 class UserReaderViewSet(viewsets.ModelViewSet):
     serializer_class = UserReaderSerializer
 
-    def get_queryset(self):
-        if self.request.user.role == UserRoleEnum.ADMIN:
-            return UserSchema.objects.filter(role=UserRoleEnum.READER)
+    def get_action_permissions(self) -> list[Any]:
+        return {
+            "create": [AllowAny()],
+        }.get(self.action, [IsAuthenticated(), IsSelfOrAdmin()])
 
-        return UserSchema.objects.filter(id=self.request.user.id)
+    def get_permissions(self) -> list[Any]:
+        """Combina permissões base com as específicas da ação"""
+        return self.get_action_permissions()
 
-    def get_permissions(self):
-        if self.action in ["list", "retrieve"]:
-            return [IsAuthenticated(), IsSelfOrAdmin()]
+    def get_queryset(self) -> UserSchema:
+        base_queryset = UserSchema.objects.filter(role=UserRoleEnum.READER)
 
-        if self.action in ["update", "partial_update", "destroy"]:
-            return [IsAuthenticated(), IsSelfOrAdmin()]
+        if self.request.user.role == UserRoleEnum.READER:
+            return base_queryset.filter(id=self.request.user.id)
 
-        return super().get_permissions()
+        return base_queryset
