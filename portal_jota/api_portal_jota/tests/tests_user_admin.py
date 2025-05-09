@@ -12,7 +12,8 @@ PASSWORD = "P@s5W0rd"
 
 class TestUserAdmin(TestCase):
 
-    def _generate_user_data(self):
+    def _generate_user_data(self) -> dict[str, str]:
+
         return {
             "username": self.faker.user_name(),
             "email": self.faker.email(),
@@ -22,7 +23,7 @@ class TestUserAdmin(TestCase):
     def _create_user(self) -> UserSchema:
         return self.user_serializer.create(self._generate_user_data())
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.faker = Faker("pt_BR")
         self.base_url = "/api/admin-user/"
         self.factory = APIRequestFactory()
@@ -37,7 +38,7 @@ class TestUserAdmin(TestCase):
         )
         self.user_serializer = UserAdminSerializer()
 
-    def test_create_user_admin_success(self):
+    def test_create_user_admin_success(self) -> None:
         user_admin = self._create_user()
         new_user_data = self._generate_user_data()
 
@@ -51,13 +52,13 @@ class TestUserAdmin(TestCase):
         status_code = response.status_code
         self.assertEqual(status_code, 201, response.data)
 
-        user = response.data
+        response_data = response.data
 
-        self.assertEqual(user["email"], new_user_data["email"])
-        self.assertEqual(user["role"], UserRoleEnum.ADMIN.label)
-        self.assertNotIn("plan", user)
+        self.assertEqual(response_data["email"], new_user_data["email"])
+        self.assertEqual(response_data["role"], UserRoleEnum.ADMIN.label)
+        self.assertNotIn("plan", response_data)
 
-    def test_update_user_admin_success(self):
+    def test_update_user_admin_success(self) -> None:
         user = self._create_user()
         updates = self._generate_user_data()
         url = f"{self.base_url}{user.id}/"
@@ -72,10 +73,10 @@ class TestUserAdmin(TestCase):
         status_code = response.status_code
         self.assertEqual(status_code, 200, response.data)
 
-        user_data = response.data
-        self.assertEqual(user_data["email"], updates["email"], user_data)
+        response_data = response.data
+        self.assertEqual(response_data["email"], updates["email"], response_data)
 
-    def test_update_user_admin_email_success(self):
+    def test_update_user_admin_email_success(self) -> None:
         user = self._create_user()
         update = {"email": self.faker.email()}
         url = f"{self.base_url}{user.id}/"
@@ -90,10 +91,10 @@ class TestUserAdmin(TestCase):
         status_code = response.status_code
         self.assertEqual(status_code, 200, response.data)
 
-        user_data = response.data
-        self.assertEqual(user_data["email"], update["email"], user_data)
+        response_data = response.data
+        self.assertEqual(response_data["email"], update["email"], response_data)
 
-    def test_delete_user_admin_success(self):
+    def test_delete_user_admin_success(self) -> None:
         user = self._create_user()
         url = f"{self.base_url}{user.id}/"
 
@@ -107,7 +108,7 @@ class TestUserAdmin(TestCase):
         status_code = response.status_code
         self.assertEqual(status_code, 204, response.data)
 
-    def test_get_user_admin_info_success(self):
+    def test_get_user_admin_info_success(self) -> None:
         user = self._create_user()
         url = f"{self.base_url}{user.id}/"
 
@@ -124,19 +125,19 @@ class TestUserAdmin(TestCase):
         user_list = response.data
         self.assertEqual(len(user_list), 1, user_list)
 
-        user_data = user_list[0]
-        self.assertEqual(user_data["email"], user.email, user_data)
-        self.assertEqual(user_data["role"], UserRoleEnum.ADMIN.label, user_data)
+        response_data = user_list[0]
+        self.assertEqual(response_data["email"], user.email, response_data)
+        self.assertEqual(response_data["role"], UserRoleEnum.ADMIN.label, response_data)
 
-    def test_list_users_from_admin_user_success(self):
+    def test_list_users_from_admin_user_success(self) -> None:
         total_usuarios = 5
-        user_1 = [self._create_user() for _ in range(total_usuarios)][0]
+        user = [self._create_user() for _ in range(total_usuarios)][0]
 
         request = self.factory.get(self.base_url)
 
-        force_authenticate(request, user=user_1)
+        force_authenticate(request, user=user)
 
-        response = self.view(request, pk=str(user_1.id))
+        response = self.view(request, pk=str(user.id))
         response.render()
 
         status_code = response.status_code

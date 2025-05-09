@@ -23,7 +23,7 @@ from ..serializers.noticia_serializer import NoticiaSerializer
                 name="id",
                 location=OpenApiParameter.PATH,
                 type=OpenApiTypes.UUID,
-                description="UUID da notícia",
+                description="ID da notícia",
             )
         ]
     )

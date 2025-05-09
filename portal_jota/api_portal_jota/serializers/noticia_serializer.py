@@ -44,7 +44,7 @@ class NoticiaSerializer(serializers.ModelSerializer):
 
         extra_kwargs = {"imagem": {"write_only": True}}
 
-    @extend_schema_field(serializers.URLField)
+    @extend_schema_field(serializers.URLField)  # type: ignore
     def get_imagem_url(self, instance: NoticiaSchema) -> str | None:
         if instance.status_imagem == StatusNoticiaImagemEnum.OK:
             return instance.imagem.url
