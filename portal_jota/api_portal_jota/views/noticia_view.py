@@ -34,7 +34,7 @@ class NoticiaViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     pagination_class = PageNumberPagination
 
-    def get_action_permissions(self) -> dict[str, Any]:
+    def get_action_permissions(self) -> list[Any]:
         return {
             "create": [IsEditorOrAdmin()],
             "update": [CanEditNews()],
@@ -57,9 +57,6 @@ class NoticiaViewSet(viewsets.ModelViewSet):
         queryset = NoticiaSchema.objects.all()
 
         match user.role:
-            case UserRoleEnum.ADMIN:
-                return queryset
-
             case UserRoleEnum.EDITOR:
                 return queryset.filter(autor=user)
 
@@ -72,3 +69,5 @@ class NoticiaViewSet(viewsets.ModelViewSet):
                 return base_query.filter(
                     models.Q(is_pro=False) | models.Q(is_pro=True, verticais__in=user.user_plan.verticais.all())
                 ).distinct()
+
+        return queryset
