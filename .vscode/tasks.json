@@ -34,5 +34,25 @@
                 ]
             }
         },
+        {
+            "label": "run-migrations",
+            "type": "shell",
+            "command": "python manage.py migrate",
+            "options": {
+                "cwd": "${workspaceFolder}/portal_jota"
+            },
+            "dependsOn": [
+                "docker-compose up"
+            ]
+        },
+        {
+            "label": "full-django-setup",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "docker-compose up",
+                "run-migrations",
+            ],
+            "problemMatcher": []
+        }
     ]
 }

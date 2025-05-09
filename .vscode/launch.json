@@ -4,16 +4,11 @@
             "name": "Run server",
             "type": "debugpy",
             "request": "launch",
-            "args": [
-                "runserver",
-                "localhost:8001"
-            ],
+            "program": "${workspaceFolder}/portal_jota/manage.py",
             "django": true,
             "autoStartBrowser": false,
             "cwd": "${workspaceFolder}/portal_jota",
-            "program": "manage.py",
-            "preLaunchTask": "docker-compose up",
-            "postDebugTask": "docker-compose down"
+            "args": ["runserver"]
         },
         {
             "name": "Run django tests",
@@ -25,8 +20,48 @@
             "django": true,
             "autoStartBrowser": false,
             "cwd": "${workspaceFolder}/portal_jota",
-            "program": "manage.py",
+            "program": "${workspaceFolder}/portal_jota/manage.py",
             "preLaunchTask": "docker-compose up",
+            "postDebugTask": "docker-compose down"
+        },
+        {
+            "name": "Celery Worker",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "celery",
+            "args": [
+                "-A",
+                "portal_jota",
+                "worker",
+                "-l",
+                "info"
+            ],
+            "django": true
+        },
+        {
+            "name": "Celery Beat",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "celery",
+            "args": [
+                "-A",
+                "portal_jota",
+                "beat",
+                "-l",
+                "info"
+            ],
+            "django": true
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Full Django Setup",
+            "configurations": [
+                "Run server",
+                "Celery Beat",
+                "Celery Worker"
+            ],
+            "preLaunchTask": "full-django-setup",
             "postDebugTask": "docker-compose down"
         }
     ]
