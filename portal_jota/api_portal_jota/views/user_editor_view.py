@@ -1,3 +1,5 @@
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
@@ -7,6 +9,16 @@ from ..permissions import IsAdmin, IsSelfOrAdmin
 from ..serializers.user_editor_serializer import UserEditorSerializer
 
 
+@extend_schema(
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            location=OpenApiParameter.PATH,
+            type=OpenApiTypes.UUID,
+            description="ID do usuário",
+        )
+    ]
+)
 class UserEditorViewSet(viewsets.ModelViewSet):
     serializer_class = UserEditorSerializer
 

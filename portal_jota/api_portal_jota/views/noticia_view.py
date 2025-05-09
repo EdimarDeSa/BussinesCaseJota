@@ -1,3 +1,5 @@
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import viewsets
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
@@ -10,6 +12,16 @@ from ..permissions import CanEditNews, IsEditorOrAdmin
 from ..serializers.noticia_serializer import NoticiaSerializer
 
 
+@extend_schema(
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            location=OpenApiParameter.PATH,
+            type=OpenApiTypes.UUID,
+            description="ID da noticia",
+        )
+    ]
+)
 class NoticiaViewSet(viewsets.ModelViewSet):
     serializer_class = NoticiaSerializer
     parser_classes = [MultiPartParser]
