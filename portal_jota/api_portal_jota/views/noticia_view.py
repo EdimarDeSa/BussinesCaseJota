@@ -1,6 +1,10 @@
+from typing import Any
+
+from django.db import models
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import OpenApiParameter, extend_schema
+from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework import viewsets
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 
@@ -12,21 +16,37 @@ from ..permissions import CanEditNews, IsEditorOrAdmin
 from ..serializers.noticia_serializer import NoticiaSerializer
 
 
-@extend_schema(
-    parameters=[
-        OpenApiParameter(
-            name="id",
-            location=OpenApiParameter.PATH,
-            type=OpenApiTypes.UUID,
-            description="ID da noticia",
-        )
-    ]
+@extend_schema_view(
+    retrieve=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                location=OpenApiParameter.PATH,
+                type=OpenApiTypes.UUID,
+                description="UUID da notícia",
+            )
+        ]
+    )
 )
 class NoticiaViewSet(viewsets.ModelViewSet):
     serializer_class = NoticiaSerializer
     parser_classes = [MultiPartParser]
+    permission_classes = [IsAuthenticated]
+    pagination_class = PageNumberPagination
 
-    def get_queryset(self):
+    def get_action_permissions(self) -> dict[str, Any]:
+        return {
+            "create": [IsEditorOrAdmin()],
+            "update": [CanEditNews()],
+            "partial_update": [CanEditNews()],
+            "destroy": [CanEditNews()],
+        }.get(self.action, [])
+
+    def get_permissions(self) -> list[Any]:
+        """Combina permissões base com as específicas da ação"""
+        return super().get_permissions() + self.get_action_permissions()
+
+    def get_queryset(self) -> list[NoticiaSchema]:
         """
         get_queryset Filtra as noticias de acordo com o perfil do usuário
         >>> Admin: Todas as noticias
@@ -34,46 +54,21 @@ class NoticiaViewSet(viewsets.ModelViewSet):
         >>> Reader: Notas de acordo com o plano e verticais
         """
         user = self.request.user
+        queryset = NoticiaSchema.objects.all()
+
         match user.role:
             case UserRoleEnum.ADMIN:
-                return NoticiaSchema.objects.all()
+                return queryset
 
             case UserRoleEnum.EDITOR:
-                return NoticiaSchema.objects.filter(autor=user.id)
+                return queryset.filter(autor=user)
 
             case UserRoleEnum.READER:
-                jota_info_noticias = NoticiaSchema.objects.filter(
-                    is_pro=False,
-                    status=StatusNoticiaEnum.PUBLICADO,
-                )
+                base_query = queryset.filter(status=StatusNoticiaEnum.PUBLICADO)
 
-                match self.request.user.user_plan.plan:
-                    case PlanEnum.JOTA_INFO:
-                        return jota_info_noticias
+                if user.user_plan.plan == PlanEnum.JOTA_INFO:
+                    return base_query.filter(is_pro=False)
 
-                    case PlanEnum.JOTA_PRO:
-                        user_verticais = user.user_plan.verticais.all()
-                        jota_pro_noticias = NoticiaSchema.objects.filter(
-                            is_pro=True,
-                            status=StatusNoticiaEnum.PUBLICADO,
-                            verticais__in=user_verticais,
-                        ).distinct()
-                        return jota_info_noticias.union(jota_pro_noticias)
-
-    def get_permissions(self):
-        """
-        get_permissions Define as permissões de acordo com a ação
-        >>> create: Editor ou Admin
-        >>> list, retrieve: Autenticado
-        >>> update, partial_update, destroy: Editor autor ou Admin
-        """
-        if self.action == "create":
-            return [IsAuthenticated(), IsEditorOrAdmin()]
-
-        if self.action in ["list", "retrieve"]:
-            return [IsAuthenticated()]
-
-        if self.action in ["update", "partial_update", "destroy"]:
-            return [IsAuthenticated(), CanEditNews()]
-
-        return super().get_permissions()
+                return base_query.filter(
+                    models.Q(is_pro=False) | models.Q(is_pro=True, verticais__in=user.user_plan.verticais.all())
+                ).distinct()

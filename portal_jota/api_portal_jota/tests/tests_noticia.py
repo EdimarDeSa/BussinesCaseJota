@@ -140,7 +140,7 @@ class TestNoticia(TestCase):
 
         noticia = response.data
         self.assertEqual(noticia["titulo"], noticia_data["titulo"])
-        self.assertEqual(noticia["autor"], user_editor.username)
+        self.assertEqual(noticia["autor_username"], user_editor.username)
         self.assertEqual(noticia["autor_id"], str(user_editor.id))
 
     def test_user_editor_can_list_only_his_noticias(self):

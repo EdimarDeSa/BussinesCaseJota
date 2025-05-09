@@ -13,65 +13,56 @@ class NoticiaSerializer(serializers.ModelSerializer):
         write_only=True,
         help_text=f"Lista de verticais. Valores possíveis: {[v.value for v in VerticalEnum]}",
     )
+    imagem_url = serializers.SerializerMethodField(read_only=True)
+    autor_id = serializers.UUIDField(source="autor.id", read_only=True)
+    autor_username = serializers.CharField(source="autor.username", read_only=True)
+    status = serializers.CharField(source="get_status_display", read_only=True)
+    status_imagem = serializers.CharField(source="get_status_imagem_display", read_only=True)
 
     class Meta:
         model = NoticiaSchema
+
         fields = [
             "id",
             "titulo",
             "subtitulo",
             "imagem",
+            "imagem_url",
             "status_imagem",
             "conteudo",
             "data_publicacao",
-            "autor",
+            "autor_username",
+            "autor_id",
             "status",
             "is_pro",
             "verticais",
             "created_at",
             "updated_at",
         ]
-        extra_kwargs = {
-            "id": {"read_only": True},
-            "autor": {"read_only": True},
-            "status": {"read_only": True},
-            "imagem": {"write_only": True},
-            "status_imagem": {"read_only": True},
-            "created_at": {"read_only": True},
-            "updated_at": {"read_only": True},
-        }
 
-    def create(self, validated_data):
+        read_only_fields = ["id", "created_at", "updated_at"]
+
+        extra_kwargs = {"imagem": {"write_only": True}}
+
+    @extend_schema_field(serializers.URLField)
+    def get_imagem_url(self, instance: NoticiaSchema) -> str | None:
+        if instance.status_imagem == StatusNoticiaImagemEnum.OK:
+            return instance.imagem.url
+        return None
+
+    def create(self, validated_data: dict) -> NoticiaSchema:
         verticais = validated_data.pop("verticais")
-        # imagem = validated_data.pop("imagem")
-
         validated_data["autor"] = self.context["request"].user
 
         noticia = super().create(validated_data)
-
-        # if imagem:
-        #     process_image.delay(str(noticia.id))
 
         verticais_objects = VerticalSchema.objects.filter(name__in=verticais)
         noticia.verticais.set(verticais_objects)
         return noticia
 
-    @extend_schema_field(serializers.CharField())
-    def get_autor_username(self, instance: NoticiaSchema) -> str:
-        return instance.autor.username
-
-    @extend_schema_field(serializers.CharField())
-    def get_autor_id(self, instance: NoticiaSchema) -> str:
-        return str(instance.autor.id)
-
     def to_representation(self, instance: NoticiaSchema) -> dict:
-        data = super().to_representation(instance)
-        data["autor_id"] = self.get_autor_id(instance)
-        data["autor"] = self.get_autor_username(instance)
-        data["status"] = instance.get_status_display()
-        data["verticais"] = [v.name for v in instance.verticais.all()]
+        representation = super().to_representation(instance)
 
-        if data["status_imagem"] == StatusNoticiaImagemEnum.OK.label:
-            data["imagem"] = instance.imagem.url
+        representation["verticais"] = [v.name for v in instance.verticais.all()]
 
-        return data
+        return representation
