@@ -14,5 +14,5 @@ class UserPlanSchema(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Plano: {self.get_plan_display()} de {self.cd_user.username}"

@@ -16,17 +16,16 @@ class UserSchema(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        match self.role:
-            case UserRoleEnum.ADMIN:
-                return f"{self.username}: <Role: {self.role}>"
-            case UserRoleEnum.EDITOR:
-                return f"{self.username}: <Role: {self.role}>"
-            case UserRoleEnum.READER:
-                return f"{self.username}: <Role: {self.role}> - <Plan: {self.user_plan.plan} - Verticais: {self.user_plan.verticais.all()}>"
+    def __str__(self) -> str:
+        default_str = f"{self.username}: <Role: {self.role}>"
 
-    @atomic
-    def save(self, *args, **kwargs) -> None:
+        if self.role == UserRoleEnum.READER:
+            return f"{self.username}: <Role: {self.role}> - <Plan: {self.user_plan.plan} - Verticais: {self.user_plan.verticais.all()}>"
+
+        return default_str
+
+    @atomic  # type: ignore
+    def save(self, *args: tuple, **kwargs: dict) -> None:
         is_new = self._state.adding
 
         super().save(*args, **kwargs)
@@ -44,5 +43,5 @@ class UserSchema(AbstractUser):
                 }
             )
 
-    def _create_user_plan(self):
+    def _create_user_plan(self) -> None:
         UserPlanSchema.objects.create(cd_user=self)
