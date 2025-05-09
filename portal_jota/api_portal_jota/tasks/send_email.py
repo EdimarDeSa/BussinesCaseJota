@@ -109,5 +109,5 @@ def send_email(email_data: EmailData) -> str:
         case _:
             return "Tipo de email inválido"
 
-    print(f'Enviando email para {send_to} com assunto \n"{subject}"\n e corpo \n"{body}"')
+    print(f'Enviando email para {send_to} com assunto "{subject}" e corpo"{body}"')
     return f"Email {email_type.name} enviado para {send_to}"
