@@ -4,23 +4,15 @@ from ..models import UserSchema
 
 
 class TokenSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user: UserSchema):
-        token = super().get_token(user)
-
-        token["username"] = user.username
-        token["email"] = user.email
-        token["role"] = user.role
-        return token
-
-    def validate(self, attrs) -> dict:
+    def validate(self, attrs: dict) -> dict:
         data = super().validate(attrs)
 
-        data["user_id"] = self.user.id
+        data["user_id"] = str(self.user.id)
         data["username"] = self.user.username
         data["email"] = self.user.email
         data["role"] = self.user.get_role_display()
-        data["id_user_plan"] = self.user.user_plan.id
+        data["plan_id"] = str(self.user.user_plan.id)
         data["plan"] = self.user.user_plan.get_plan_display()
+        data["verticais"] = [v.name for v in self.user.user_plan.verticais.all()]
 
         return data
