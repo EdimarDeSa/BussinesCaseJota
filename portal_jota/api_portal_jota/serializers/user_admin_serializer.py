@@ -6,17 +6,24 @@ from ..models import UserSchema
 
 
 class UserAdminSerializer(serializers.ModelSerializer):
+    role = serializers.CharField(source="get_role_display", read_only=True)
+
     class Meta:
         model = UserSchema
-        fields = ["id", "username", "email", "password", "role", "created_at", "updated_at"]
-        extra_kwargs = {
-            "id": {"read_only": True},
-            "username": {"write_only": True},
-            "password": {"write_only": True},
-            "role": {"read_only": True},
-            "created_at": {"read_only": True},
-            "updated_at": {"read_only": True},
-        }
+
+        fields = [
+            "id",
+            "username",
+            "email",
+            "password",
+            "role",
+            "created_at",
+            "updated_at",
+        ]
+
+        read_only_fields = ["id", "created_at", "updated_at"]
+
+        extra_kwargs = {"username": {"write_only": True}, "password": {"write_only": True}}
 
     def create(self, validated_data: dict) -> UserSchema:
         validated_data["password"] = make_password(validated_data["password"])
@@ -31,8 +38,3 @@ class UserAdminSerializer(serializers.ModelSerializer):
             validated_data["password"] = make_password(validated_data["password"])
 
         return super().update(instance, validated_data)
-
-    def to_representation(self, instance: UserSchema) -> dict:
-        data = super().to_representation(instance)
-        data["role"] = instance.get_role_display()
-        return data
