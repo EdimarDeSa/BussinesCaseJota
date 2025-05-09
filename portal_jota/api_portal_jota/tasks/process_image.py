@@ -45,7 +45,7 @@ def process_image(noticia_id: NoticiaId) -> str:
         send_email.delay(
             {
                 "email_type": EmailTypeEnum.IMAGEM_PROCESSADA,
-                "news_id": str(noticia.id),
+                "news_id": str(noticia_id),
             }
         )
 
@@ -58,7 +58,7 @@ def process_image(noticia_id: NoticiaId) -> str:
         send_email.delay(
             {
                 "email_type": EmailTypeEnum.ERRO_IMAGEM,
-                "news_id": str(noticia.id),
+                "news_id": str(noticia_id),
             }
         )
         raise e

@@ -70,7 +70,12 @@ class NoticiaSchema(models.Model):
             self.status = StatusNoticiaEnum.RASCUNHO
             self.save(update_fields=["status"])
 
-            send_email.delay({"email_type": EmailTypeEnum.NOTICIA_DESATIVADA})
+            send_email.delay(
+                {
+                    "email_type": EmailTypeEnum.NOTICIA_DESATIVADA,
+                    "news_id": str(self.id),
+                }
+            )
 
         imagem_alterada = "imagem" in update_fields
 
