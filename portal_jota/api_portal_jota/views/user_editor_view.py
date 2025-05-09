@@ -30,13 +30,14 @@ class UserEditorViewSet(viewsets.ModelViewSet):
     def get_action_permissions(self) -> list[Any]:
         return {
             "create": [IsAdmin()],
-        }.get(self.action, [IsSelfOrAdmin])
+        }.get(self.action, [IsSelfOrAdmin()])
+
+    def get_permissions(self) -> list[Any]:
+        """Combina permissões base com as específicas da ação"""
+        return super().get_permissions() + self.get_action_permissions()
 
     def get_queryset(self) -> None:
         if self.request.user.role == UserRoleEnum.ADMIN:
             return UserSchema.objects.filter(role=UserRoleEnum.EDITOR)
 
         return UserSchema.objects.filter(id=self.request.user.id)
-
-    def get_permissions(self) -> list[Any]:
-        return super().get_permissions() + self.get_action_permissions()
