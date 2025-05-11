@@ -34,10 +34,10 @@ Documentação oficial: [Google Doc](https://docs.google.com/document/d/1wHMVlLk
 | Testes Automatizados e CI/CD | **OK** |
 | Infraestrutura e Deploy | **OK** |
 | Processamento assincrono de imagens | **OK** |
-| Envio de emails de notificações | Opcional |
+| Envio de emails de notificações | **OK** |
 | Implementação de Swagger | **OK** |
 | Implementação de GitHub Actions | Em desenvolvimento |
-| Implementação de testes | Em desenvolvimento |
+| Implementação de testes | **OK** |
 | Implementação de Docker | Em desenvolvimento |
 | Implementação de Docker Compose | Em desenvolvimento |
 | --- | --- |
@@ -171,3 +171,5 @@ ou para docker compose < 2.0
   - Link para sugestão de leituras
   - Reduzir as informações reotrnadas pela listagem de notícias
   - Adicionar tabela para metadados de visualização e compartilhamento
+- Acesso e planos
+  - Acesso diferenciado para leitores sem cadastro (Atualmente não tem acesso a nenhuma noticia)
