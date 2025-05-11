@@ -12,17 +12,15 @@ from ..permissions import IsAdmin, IsReaderOrdAdmin
 from ..serializers.user_plan_serializer import UserPlanSerializer
 
 
-@extend_schema_view(
-    retrieve=extend_schema(
-        parameters=[
-            OpenApiParameter(
-                name="id",
-                location=OpenApiParameter.PATH,
-                type=OpenApiTypes.UUID,
-                description="ID do plano",
-            )
-        ]
-    )
+@extend_schema(
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            location=OpenApiParameter.PATH,
+            type=OpenApiTypes.UUID,
+            description="ID do plano",
+        )
+    ]
 )
 class UserPlanViewSet(
     viewsets.GenericViewSet,

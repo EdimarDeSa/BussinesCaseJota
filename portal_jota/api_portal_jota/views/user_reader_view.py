@@ -11,17 +11,15 @@ from ..permissions import IsSelfOrAdmin
 from ..serializers.user_reader_serializer import UserReaderSerializer
 
 
-@extend_schema_view(
-    retrieve=extend_schema(
-        parameters=[
-            OpenApiParameter(
-                name="id",
-                location=OpenApiParameter.PATH,
-                type=OpenApiTypes.UUID,
-                description="ID do usuário",
-            )
-        ]
-    )
+@extend_schema(
+    parameters=[
+        OpenApiParameter(
+            name="id",
+            location=OpenApiParameter.PATH,
+            type=OpenApiTypes.UUID,
+            description="ID do usuário",
+        )
+    ]
 )
 class UserReaderViewSet(viewsets.ModelViewSet):
     serializer_class = UserReaderSerializer

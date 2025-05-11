@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import uuid
+from typing import Any
 
 from django.db import models
 from django.db.models import FileField
@@ -8,9 +11,10 @@ from django.utils import timezone
 from ..enums.email_type_enum import EmailTypeEnum
 from ..enums.status_noticia_enum import StatusNoticiaEnum
 from ..enums.status_noticia_imagem_enum import StatusNoticiaImagemEnum
+from ..errors import ImageError
 
 
-def get_upload_to(instance, filename):
+def get_upload_to(instance: "NoticiaSchema", filename: str) -> str:
     return f"noticias/{instance.id}/{filename}"
 
 
@@ -20,8 +24,10 @@ def get_image_extension(file: FileField) -> str:
 
 def check_image_type(file: FileField) -> FileField:
     valid_extensions = ["jpg", "jpeg", "png"]
+
     if not get_image_extension(file) in valid_extensions:
-        raise ValueError("Unsupported file extension.")
+        raise ImageError(f"Imagem incompatível. Deve ser do tipo {'., '.join(valid_extensions)}")
+
     return file
 
 
@@ -43,11 +49,11 @@ class NoticiaSchema(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Noticia: {self.titulo} - {self.data_publicacao} - {self.autor.username}"
 
-    @atomic
-    def save(self, *args, **kwargs):
+    @atomic  # type: ignore
+    def save(self, *args: tuple, **kwargs: dict[str, list | Any]) -> None:
         is_new = self._state.adding
         has_image = bool(self.imagem)
 
@@ -55,7 +61,7 @@ class NoticiaSchema(models.Model):
 
         agora = timezone.now()
 
-        update_fields = kwargs.get("update_fields", [])
+        update_fields: list | dict = kwargs.get("update_fields", [])
 
         if all(
             [

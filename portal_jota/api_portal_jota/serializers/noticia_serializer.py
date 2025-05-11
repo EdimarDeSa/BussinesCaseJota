@@ -61,8 +61,28 @@ class NoticiaSerializer(serializers.ModelSerializer):
         return noticia
 
     def to_representation(self, instance: NoticiaSchema) -> dict:
+        verticais = [v.name for v in instance.verticais.all()]
+        action = self.context.get("view").action
         representation = super().to_representation(instance)
+        representation["verticais"] = verticais
 
-        representation["verticais"] = [v.name for v in instance.verticais.all()]
+        if action not in ["por_vertical", "list"]:
+            # Retorno completo para outras ações
+            return representation
 
+        [
+            representation.pop(f)
+            for f in [
+                "id",
+                "titulo",
+                "subtitulo",
+                "data_publicacao",
+                "autor_username",
+                "autor_id",
+                "is_pro",
+                "verticais",
+            ]
+        ]
+
+        # Retorno reduzido para por_vertical e listagem
         return representation

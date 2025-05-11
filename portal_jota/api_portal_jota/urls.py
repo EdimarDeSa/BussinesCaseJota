@@ -18,6 +18,7 @@ router.register(r"user-plan", viewset=UserPlanViewSet, basename="user-plan")
 
 router.register(r"noticia", viewset=NoticiaViewSet, basename="noticia")
 
+
 urlpatterns = [
     path("token/", TokenView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", token_refresh, name="token_refresh"),
