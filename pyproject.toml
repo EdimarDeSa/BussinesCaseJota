@@ -10,17 +10,28 @@ readme = "README.md"
 requires-python = ">=3.11, <4.0"
 dependencies = [
     "django (>=5.2,<6.0)",
-    "djangorestframework (>=3.16.0,<4.0.0)",
     "psycopg2-binary (>=2.9.10,<3.0.0)",
     "python-dotenv (>=1.1.0,<2.0.0)",
-    "drf-spectacular (>=0.28.0,<0.29.0)",
-    "djangorestframework-simplejwt[crypto] (>=5.5.0,<6.0.0)",
-    "pillow (>=11.2.1,<12.0.0)",
     "pika (>=1.3.2,<2.0.0)",
     "celery (>=5.5.2,<6.0.0)",
     "redis (>=6.0.0,<7.0.0)",
-    "django-celery-beat (>=2.8.0,<3.0.0)",
 ]
+
+
+[tool.poetry.group.web.dependencies]
+gunicorn = "^23.0.0"
+djangorestframework = "^3.16.0"
+djangorestframework-simplejwt = {extras = ["crypto"], version = "^5.5.0"}
+drf-spectacular = "^0.28.0"
+pillow = "^11.2.1"
+
+
+[tool.poetry.group.worker.dependencies]
+pillow = "^11.2.1"
+
+
+[tool.poetry.group.beat.dependencies]
+django-celery-beat = "^2.8.0"
 
 
 [build-system]
