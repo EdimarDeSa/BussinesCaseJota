@@ -72,6 +72,29 @@ services:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "status"]
-      interval: 30s
+      interval: 10s
       timeout: 10s
       retries: 3
+  
+  web:
+    container_name: portal_jota_web
+    image: portal_jota
+    build:
+      context: ..
+      dockerfile: docker/portal_jota/Dockerfile
+    env_file:
+      - portal_jota/portal_jota.env
+    hostname: portal_jota_web
+    networks:
+      - portal_jota_postgres_network
+      - portal_jota_redis_network
+      - portal_jota_rabbitmq_network
+    ports:
+      - 8000:8000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
