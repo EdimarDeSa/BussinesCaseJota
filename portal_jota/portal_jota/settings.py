@@ -192,6 +192,6 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_BEAT_SCHEDULE = {
     "publicar_noticia": {
         "task": "api_portal_jota.tasks.publicar_noticia.publicar_noticia",
-        "schedule": timedelta(seconds=5) if DEBUG else crontab("* * */1 * *"),
+        "schedule": timedelta(seconds=5) if DEBUG else crontab(hour=1),
     },
 }
