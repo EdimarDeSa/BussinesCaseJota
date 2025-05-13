@@ -11,13 +11,12 @@ class NoticiaSerializer(serializers.ModelSerializer):
         child=serializers.ChoiceField(choices=VerticalEnum.labels),
         required=True,
         write_only=True,
-        help_text=f"Lista de verticais. Valores possíveis: {[v.value for v in VerticalEnum]}",
+        help_text=f"Lista de verticais. Valores possíveis: {VerticalEnum.labels}",
     )
     imagem_url = serializers.SerializerMethodField(read_only=True)
     autor_id = serializers.UUIDField(source="autor.id", read_only=True)
     autor_username = serializers.CharField(source="autor.username", read_only=True)
     status = serializers.CharField(source="get_status_display", read_only=True)
-    status_imagem = serializers.CharField(source="get_status_imagem_display", read_only=True)
 
     class Meta:
         model = NoticiaSchema
@@ -41,8 +40,6 @@ class NoticiaSerializer(serializers.ModelSerializer):
         ]
 
         read_only_fields = ["id", "created_at", "updated_at"]
-
-        extra_kwargs = {"imagem": {"write_only": True}}
 
     @extend_schema_field(serializers.URLField)  # type: ignore
     def get_imagem_url(self, instance: NoticiaSchema) -> str | None:
