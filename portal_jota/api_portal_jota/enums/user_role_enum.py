@@ -1,7 +1,7 @@
-from django.db import models
+from ..enums.better_text_choices import BetterTextChoices
 
 
-class UserRoleEnum(models.TextChoices):
+class UserRoleEnum(BetterTextChoices):
     ADMIN = "A", "Admin"
     EDITOR = "E", "Editor"
     READER = "R", "Leitor"

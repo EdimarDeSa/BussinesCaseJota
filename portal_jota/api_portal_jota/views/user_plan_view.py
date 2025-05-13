@@ -1,7 +1,6 @@
 from typing import Any
 
-from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
+from drf_spectacular.utils import extend_schema_view
 from rest_framework import mixins, viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
@@ -10,18 +9,13 @@ from ..enums.user_role_enum import UserRoleEnum
 from ..models import UserPlanSchema
 from ..permissions import IsAdmin, IsReaderOrdAdmin
 from ..serializers.user_plan_serializer import UserPlanSerializer
+from ..types import extend_uuid_schema
+
+parameter_map = extend_uuid_schema(description="ID do plano")
+parameter_map.pop("destroy")
 
 
-@extend_schema(
-    parameters=[
-        OpenApiParameter(
-            name="id",
-            location=OpenApiParameter.PATH,
-            type=OpenApiTypes.UUID,
-            description="ID do plano",
-        )
-    ]
-)
+@extend_schema_view(**parameter_map)
 class UserPlanViewSet(
     viewsets.GenericViewSet,
     mixins.ListModelMixin,

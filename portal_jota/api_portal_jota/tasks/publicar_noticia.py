@@ -6,7 +6,7 @@ from ..enums.status_noticia_enum import StatusNoticiaEnum
 from .send_email import send_email
 
 
-@shared_task
+@shared_task  # type: ignore
 def publicar_noticia() -> str:
     from ..models import NoticiaSchema
 

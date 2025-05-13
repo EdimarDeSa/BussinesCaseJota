@@ -1,8 +1,6 @@
 from typing import Any
 
-from django.db import models
-from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
+from drf_spectacular.utils import extend_schema_view
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
@@ -19,18 +17,10 @@ from ..errors import ImageError
 from ..models import NoticiaSchema, UserSchema
 from ..permissions import IsEditorOrAdmin
 from ..serializers.noticia_serializer import NoticiaSerializer
+from ..types import extend_uuid_schema
 
 
-@extend_schema(
-    parameters=[
-        OpenApiParameter(
-            name="id",
-            location=OpenApiParameter.PATH,
-            type=OpenApiTypes.UUID,
-            description="ID da notícia",
-        )
-    ]
-)
+@extend_schema_view(**extend_uuid_schema(description="ID da notícia"))
 class NoticiaViewSet(viewsets.ModelViewSet):
     serializer_class = NoticiaSerializer
     parser_classes = [MultiPartParser]
@@ -62,10 +52,6 @@ class NoticiaViewSet(viewsets.ModelViewSet):
         editando_noticia = self.action in ["update", "partial_update", "destroy"]
         if user.role == UserRoleEnum.EDITOR and editando_noticia:
             return queryset.filter(autor=user)
-
-            # return base_query.filter(
-            #     models.Q(is_pro=False) | models.Q(is_pro=True, verticais__in=user.user_plan.verticais.all())
-            # ).distinct()
 
         return queryset.none()
 

@@ -11,7 +11,7 @@ from ..types import NoticiaId
 from .send_email import send_email
 
 
-@shared_task
+@shared_task  # type: ignore
 def process_image(noticia_id: NoticiaId) -> str:
     from ..models import NoticiaSchema
 

@@ -6,7 +6,7 @@ from ..models import NoticiaSchema, UserSchema, VerticalSchema
 from ..types import EmailData
 
 
-@shared_task
+@shared_task  # type: ignore
 def send_email(email_data: EmailData) -> str:
     """
     Send Email Service
@@ -45,7 +45,7 @@ def send_email(email_data: EmailData) -> str:
         case EmailTypeEnum.NOTICIA_PUBLICADA:
             noticia = NoticiaSchema.objects.get(id=email_data["news_id"])
 
-            verticais = noticia.verticais.all() if noticia.is_pro else None
+            verticais = noticia.verticais.all() if noticia.is_pro else []
 
             autor_email = noticia.autor.email
             send_to = [autor_email]
