@@ -21,18 +21,22 @@ class IsSelfOrAdmin(BasePermission):
 class IsReaderOrdAdmin(BasePermission):
     def has_permission(self, request: Request, view: object) -> bool:
         is_auth = request.user.is_authenticated
-        has_role = request.user.role in [UserRoleEnum.READER, UserRoleEnum.ADMIN]
+        user_role = request.user.role if is_auth else None
+        has_role = user_role in [UserRoleEnum.EDITOR, UserRoleEnum.ADMIN]
         return all([is_auth, has_role])
 
     def has_object_permission(self, request: Request, view: object, obj: object) -> bool:
-        has_role = request.user.role in [UserRoleEnum.READER, UserRoleEnum.ADMIN]
+        is_auth = request.user.is_authenticated
+        user_role = request.user.role if is_auth else None
+        has_role = user_role in [UserRoleEnum.EDITOR, UserRoleEnum.ADMIN]
         return has_role
 
 
 class IsEditorOrAdmin(BasePermission):
     def has_permission(self, request: Request, view: object) -> bool:
         is_auth = request.user.is_authenticated
-        has_role = request.user.role in [UserRoleEnum.EDITOR, UserRoleEnum.ADMIN]
+        user_role = request.user.role if is_auth else None
+        has_role = user_role in [UserRoleEnum.EDITOR, UserRoleEnum.ADMIN]
         return all([is_auth, has_role])
 
     def has_object_permission(self, request: Request, view: object, obj: UserSchema) -> bool:
