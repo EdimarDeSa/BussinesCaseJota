@@ -119,3 +119,24 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+  
+  celery_beat:
+    container_name: portal_jota_celery_beat
+    image: portal_jota:beat
+    build:
+      context: ..
+      dockerfile: docker/celery_beat/Dockerfile
+    env_file:
+      - celery_beat/celery_beat.env
+    hostname: portal_jota_celery_beat
+    networks:
+      - portal_jota_postgres_network
+      - portal_jota_redis_network
+      - portal_jota_rabbitmq_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy

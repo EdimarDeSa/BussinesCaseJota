@@ -4,6 +4,7 @@ from celery.schedules import crontab
 
 from .base import *
 from .base import DEBUG  # Para evitar erro de linter
+from .worker import *
 
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_BEAT_SCHEDULE = {

@@ -78,6 +78,4 @@ RUN chmod +x entrypoint.sh
 
 USER app
 
-EXPOSE 8000
-
 ENTRYPOINT [ "/app/portal_jota/entrypoint.sh" ]'
