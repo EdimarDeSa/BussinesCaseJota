@@ -78,7 +78,7 @@ services:
   
   web:
     container_name: portal_jota_web
-    image: portal_jota
+    image: portal_jota:web
     build:
       context: ..
       dockerfile: docker/portal_jota/Dockerfile
@@ -91,6 +91,27 @@ services:
       - portal_jota_rabbitmq_network
     ports:
       - 8000:8000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  celery_worker:
+    container_name: portal_jota_celery_worker
+    image: portal_jota:worker
+    build:
+      context: ..
+      dockerfile: docker/celery_worker/Dockerfile
+    env_file:
+      - celery_worker/celery_worker.env
+    hostname: portal_jota_celery_worker
+    networks:
+      - portal_jota_postgres_network
+      - portal_jota_redis_network
+      - portal_jota_rabbitmq_network
     depends_on:
       postgres:
         condition: service_healthy

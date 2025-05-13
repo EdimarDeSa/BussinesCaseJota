@@ -42,7 +42,8 @@ FROM python:3.13-alpine AS final
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app/portal_jota \
-    PATH="/app/.local/bin:${PATH}"
+    PATH="/app/.local/bin:${PATH}" \
+    ENV_TYPE="web"
 
 RUN apk add --no-cache \
         libjpeg-turbo \
