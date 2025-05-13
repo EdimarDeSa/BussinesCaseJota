@@ -66,12 +66,11 @@ WORKDIR /app/portal_jota
 COPY --chown=app:app portal_jota/manage.py manage.py
 COPY --chown=app:app portal_jota/portal_jota/celery.py portal_jota/celery.py
 COPY --chown=app:app portal_jota/portal_jota/settings portal_jota/settings
-COPY --chown=app:app portal_jota/api_portal_jota/models api_portal_jota/models
+COPY --chown=app:app portal_jota/api_portal_jota/apps.py api_portal_jota/apps.py
+COPY --chown=app:app portal_jota/api_portal_jota/errors.py api_portal_jota/errors.py
 COPY --chown=app:app portal_jota/api_portal_jota/types.py api_portal_jota/types.py
-COPY --chown=app:app portal_jota/api_portal_jota/enums/user_role_enum.py api_portal_jota/enums/user_role_enum.py
-COPY --chown=app:app portal_jota/api_portal_jota/enums/email_type_enum.py api_portal_jota/enums/email_type_enum.py
-COPY --chown=app:app portal_jota/api_portal_jota/enums/status_noticia_enum.py api_portal_jota/enums/status_noticia_enum.py
-COPY --chown=app:app portal_jota/api_portal_jota/enums/status_noticia_imagem_enum.py api_portal_jota/enums/status_noticia_imagem_enum.py
+COPY --chown=app:app portal_jota/api_portal_jota/models api_portal_jota/models
+COPY --chown=app:app portal_jota/api_portal_jota/enums api_portal_jota/enums
 
 COPY --chown=app:app docker/celery_worker/entrypoint.sh ./
 
