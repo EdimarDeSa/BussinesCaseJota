@@ -12,6 +12,7 @@ from .user_plan_schema import UserPlanSchema
 class UserSchema(AbstractUser):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     role = models.CharField(max_length=1, choices=UserRoleEnum.choices, default=UserRoleEnum.READER)
+    email = models.EmailField(unique=True)
 
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
