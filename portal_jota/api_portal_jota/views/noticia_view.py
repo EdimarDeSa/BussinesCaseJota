@@ -4,7 +4,7 @@ from drf_spectacular.utils import extend_schema_view
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.parsers import MultiPartParser
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -20,10 +20,10 @@ from ..serializers.noticia_serializer import NoticiaSerializer
 from ..types import extend_uuid_schema
 
 
-@extend_schema_view(**extend_uuid_schema(description="ID da notícia"))
+@extend_schema_view(**extend_uuid_schema(description="ID da noticia"))
 class NoticiaViewSet(viewsets.ModelViewSet):
     serializer_class = NoticiaSerializer
-    parser_classes = [MultiPartParser]
+    parser_classes = (MultiPartParser, FormParser)
     pagination_class = PageNumberPagination
 
     def get_permissions(self) -> list[Any]:
