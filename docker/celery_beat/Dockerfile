@@ -27,11 +27,6 @@ RUN apk update && apk upgrade \
         libffi-dev \
         openssl-dev \
         build-base \
-        libc6-compat \
-        libjpeg-turbo \
-        libpng \
-        libwebp \
-        freetype \
     && rm -rf /var/cache/apk/*
 
 COPY --from=generator /app/requirements.txt ./
@@ -46,12 +41,7 @@ ENV PYTHONUNBUFFERED=1 \
     PATH="/app/.local/bin:${PATH}" \
     ENV_TYPE="beat"
 
-RUN apk add --no-cache \
-        libjpeg-turbo \
-        libpng \
-        libwebp \
-        freetype \
-    && adduser -D -h /app -s /bin/sh app \
+RUN adduser -D -h /app -s /bin/sh app \
     && mkdir -p /app/portal_jota \
     && chown -R app:app /app \
     && rm -rf /var/cache/apk/*
