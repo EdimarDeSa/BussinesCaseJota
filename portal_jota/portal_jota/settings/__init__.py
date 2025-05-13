@@ -8,6 +8,6 @@ match ENV_TYPE:
     case "beat":
         from .beat import *
     case "worker":
-        from .worker import *
+        from .celery import *
     case "full":
         from .full import *
