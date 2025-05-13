@@ -106,7 +106,7 @@ services:
       context: ..
       dockerfile: docker/celery_worker/Dockerfile
     env_file:
-      - celery_worker/celery_worker.env
+      - portal_jota/portal_jota.env
     hostname: portal_jota_celery_worker
     networks:
       - portal_jota_postgres_network
@@ -127,7 +127,7 @@ services:
       context: ..
       dockerfile: docker/celery_beat/Dockerfile
     env_file:
-      - celery_beat/celery_beat.env
+      - portal_jota/portal_jota.env
     hostname: portal_jota_celery_beat
     networks:
       - portal_jota_postgres_network

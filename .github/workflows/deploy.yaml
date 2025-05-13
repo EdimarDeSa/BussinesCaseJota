@@ -1,0 +1,72 @@
+name: Deploy em VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Configura o SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Deploy via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+          cd ~/
+            # clona o código caso não exista
+            git clone https://github.com/edimar/BussinesCaseJota.git
+          cd BussinesCaseJota
+            # atualiza o código
+            git pull
+
+          # Gerar arquivos .env
+          cd docker
+            # portal_jota/portal_jota.env
+            echo SECRET_KEY=${{ secrets.SECRET_KEY }} > portal_jota/portal_jota.env
+            echo DEBUG=${{ secrets.DEBUG }} > portal_jota/portal_jota.env
+            echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} > portal_jota/portal_jota.env
+
+            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} > portal_jota/portal_jota.env
+            echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> portal_jota/portal_jota.env
+            echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> portal_jota/portal_jota.env
+            echo POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} >> portal_jota/portal_jota.env
+            echo POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} >> portal_jota/portal_jota.env
+
+            echo REDIS_HOST=${{ secrets.REDIS_HOST }} > portal_jota/portal_jota.env
+            echo REDIS_USER=${{ secrets.REDIS_USER }} > portal_jota/portal_jota.env
+            echo REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} >> portal_jota/portal_jota.env
+            echo REDIS_PORT=${{ secrets.REDIS_PORT }} >> portal_jota/portal_jota.env
+
+            echo RABBITMQ_DEFAULT_USER=${{ secrets.RABBITMQ_DEFAULT_USER }} > portal_jota/portal_jota.env
+            echo RABBITMQ_DEFAULT_PASS=${{ secrets.RABBITMQ_DEFAULT_PASS }} >> portal_jota/portal_jota.env
+            echo RABBITMQ_HOST=${{ secrets.RABBITMQ_HOST }} >> portal_jota/portal_jota.env
+            echo RABBITMQ_PORT=${{ secrets.RABBITMQ_PORT }} >> portal_jota/portal_jota.env
+
+            # postgres/postgres.env
+            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} > postgres/postgres.env
+            echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> postgres/postgres.env
+            echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> postgres/postgres.env
+
+            # redis/redis.env
+            echo REDIS_USER=${{ secrets.REDIS_USER }} > redis/redis.env
+            echo REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} >> redis/redis.env
+            echo REDIS_PORT=${{ secrets.REDIS_PORT }} >> redis/redis.env
+
+            # rabbitmq/rabbitmq.env
+            echo RABBITMQ_DEFAULT_USER=${{ secrets.RABBITMQ_DEFAULT_USER }} > rabbitmq/rabbitmq.env
+            echo RABBITMQ_DEFAULT_PASS=${{ secrets.RABBITMQ_DEFAULT_PASS }} >> rabbitmq/rabbitmq.env
+
+            # executa o deploy
+            cd ~/BussinesCaseJota
+              ./docker/down.sh
+              ./docker/up.sh
+          EOF
