@@ -1,12 +1,11 @@
 import os
 from datetime import timedelta
 
-from django.conf import settings
-
 from .base import *
+from .base import BASE_DIR, INSTALLED_APPS  # Para evitar erro de linter
 from .celery import *
 
-settings.INSTALLED_APPS.extend(
+INSTALLED_APPS.extend(
     [
         # Third-party apps
         "rest_framework",
@@ -60,10 +59,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 STATIC_URL = "static/"
-STATIC_ROOT = os.path.join(settings.BASE_DIR, "static_files")
+STATIC_ROOT = os.path.join(BASE_DIR, "static_files")
 
 MEDIA_URL = "media/"
-MEDIA_ROOT = os.path.join(settings.BASE_DIR, "media_files")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media_files")
 
 # Rest Framework
 REST_FRAMEWORK = {
