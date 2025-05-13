@@ -14,7 +14,7 @@ from ..enums.user_role_enum import UserRoleEnum
 from ..enums.vertical_enum import VerticalEnum
 from ..models import NoticiaSchema
 from ..tasks.publicar_noticia import publicar_noticia
-from .aux_funcs import create_noticia, create_user, generate_noticia_data, generate_user_data
+from .aux_funcs import create_noticia, create_user, generate_noticia_data
 
 
 class TestNoticia(APITestCase, URLPatternsTestCase):
