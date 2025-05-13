@@ -1,9 +1,10 @@
-from .base import *
-from .base import DEBUG  # Para evitar erro de linter
-from .beat import *
-from .worker import *
+from django.conf import settings
 
-CELERY_TASK_ALWAYS_EAGER = DEBUG
-CELERY_TASK_EAGER_PROPAGATES = DEBUG
+from .base import *
+from .beat import *
+from .celery import *
+
+CELERY_TASK_ALWAYS_EAGER = settings.DEBUG
+CELERY_TASK_EAGER_PROPAGATES = settings.DEBUG
 
 from .web import *

@@ -1,9 +1,12 @@
+import os
 from datetime import timedelta
 
-from .base import *
-from .base import BASE_DIR, INSTALLED_APPS  # Para evitar erro de linter
+from django.conf import settings
 
-INSTALLED_APPS.extend(
+from .base import *
+from .celery import *
+
+settings.INSTALLED_APPS.extend(
     [
         # Third-party apps
         "rest_framework",
@@ -55,11 +58,12 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
 STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "static_files"
+STATIC_ROOT = os.path.join(settings.BASE_DIR, "static_files")
 
 MEDIA_URL = "media/"
-MEDIA_ROOT = BASE_DIR / "media_files"
+MEDIA_ROOT = os.path.join(settings.BASE_DIR, "media_files")
 
 # Rest Framework
 REST_FRAMEWORK = {

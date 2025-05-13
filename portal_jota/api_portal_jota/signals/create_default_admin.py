@@ -4,7 +4,6 @@ from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 
 from ..enums.user_role_enum import UserRoleEnum
-from ..models import UserSchema
 from ..serializers.user_serializer import UserSerializer
 
 
