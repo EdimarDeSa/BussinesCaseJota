@@ -1,1 +1,2 @@
 from .auto_gen_verticais import populate_verticals
+from .create_default_admin import create_default_admin
