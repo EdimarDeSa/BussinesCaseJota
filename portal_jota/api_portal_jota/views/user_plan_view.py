@@ -9,7 +9,7 @@ from ..enums.user_role_enum import UserRoleEnum
 from ..models import UserPlanSchema
 from ..permissions import IsAdmin, IsReaderOrdAdmin
 from ..serializers.user_plan_serializer import UserPlanSerializer
-from ..types import extend_uuid_schema
+from .id_extend import extend_uuid_schema
 
 parameter_map = extend_uuid_schema(description="ID do plano")
 parameter_map.pop("destroy")

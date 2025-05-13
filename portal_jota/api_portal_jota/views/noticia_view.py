@@ -17,7 +17,7 @@ from ..errors import ImageError
 from ..models import NoticiaSchema, UserSchema
 from ..permissions import IsEditorOrAdmin
 from ..serializers.noticia_serializer import NoticiaSerializer
-from ..types import extend_uuid_schema
+from .id_extend import extend_uuid_schema
 
 
 @extend_schema_view(**extend_uuid_schema(description="ID da noticia"))

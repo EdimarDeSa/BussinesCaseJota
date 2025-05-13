@@ -9,7 +9,7 @@ from ..enums.user_role_enum import UserRoleEnum
 from ..models import UserSchema
 from ..permissions import IsSelfOrAdmin
 from ..serializers.user_serializer import UserSerializer
-from ..types import extend_uuid_schema
+from .id_extend import extend_uuid_schema
 
 
 @extend_schema_view(**extend_uuid_schema(description="ID do usuário"))
