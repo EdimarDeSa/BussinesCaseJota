@@ -74,6 +74,7 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Bussines case para vaga de Desenvolvedor Backend na Jota",
     "VERSION": "0.1.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
 }
 
 SIMPLE_JWT = {
