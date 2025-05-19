@@ -22,13 +22,13 @@ class IsReaderOrdAdmin(BasePermission):
     def has_permission(self, request: Request, view: object) -> bool:
         is_auth = request.user.is_authenticated
         user_role = request.user.role if is_auth else None
-        has_role = user_role in [UserRoleEnum.EDITOR, UserRoleEnum.ADMIN]
+        has_role = user_role in {UserRoleEnum.READER, UserRoleEnum.ADMIN}
         return all([is_auth, has_role])
 
     def has_object_permission(self, request: Request, view: object, obj: object) -> bool:
         is_auth = request.user.is_authenticated
         user_role = request.user.role if is_auth else None
-        has_role = user_role in [UserRoleEnum.EDITOR, UserRoleEnum.ADMIN]
+        has_role = user_role in {UserRoleEnum.READER, UserRoleEnum.ADMIN}
         return has_role
 
 
