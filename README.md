@@ -40,7 +40,7 @@ Documentação oficial: [Google Doc](https://docs.google.com/document/d/1wHMVlLk
 | Implementação de Docker | **OK** |
 | Implementação de Docker Compose | **OK** |
 | --- | --- |
-| **Status global** | **EM REVISÃO** |
+| **Status global** | **OK** |
 
 ### API stack
 - Linguagem principal: 
