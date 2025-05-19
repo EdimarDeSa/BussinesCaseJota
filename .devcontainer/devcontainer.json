@@ -1,0 +1,81 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+{
+	"name": "Python 3",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/python:1-3.13",
+	"features": {
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+			"moby": true,
+			"installDockerBuildx": true,
+			"installDockerComposeSwitch": true,
+			"version": "latest",
+			"dockerDashComposeVersion": "v2"
+		},
+		"ghcr.io/robbert229/devcontainer-features/postgresql-client:1": {
+			"version": "17"
+		},
+		"ghcr.io/va-h/devcontainers-features/uv:1": {
+			"shellautocompletion": true,
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers-extra/features/zsh-plugins:0": {
+			"plugins": "ssh-agent npm",
+			"omzPlugins": "https://github.com/zsh-users/zsh-autosuggestions",
+			"username": "vscode"
+		},
+		"ghcr.io/devcontainer-community/devcontainer-features/chezmoi.io:1": {
+			"version": "latest"
+		},
+		"ghcr.io/roul/devcontainer-features/bitwarden-cli": {
+			"version": "latest"
+		}
+	},
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": ". .devcontainer/devcontainer-setup.sh",
+	// "postCreateCommand": "pip3 install --user -r requirements.txt",
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				// Extensões gerais
+				"codeium.codeium",
+				"cweijan.dbclient-jdbc",
+				"ms-ceintl.vscode-language-pack-pt-br",
+				"ms-vscode-remote.vscode-remote-extensionpack",
+				"ms-vsliveshare.vsliveshare",
+				"yzhang.markdown-all-in-one",
+				"cweijan.vscode-redis-client",
+				"gruntfuggly.todo-tree",
+				"redhat.vscode-yaml",
+				// Temas
+				"catppuccin.catppuccin-vsc",
+				"pkief.material-icon-theme",
+				// Formatadores
+				"esbenp.prettier-vscode",
+				"inferrinizzard.prettier-sql-vscode",
+				"foxundermoon.shell-format",
+				// Git e GitHub
+				"github.vscode-github-actions",
+				"github.vscode-pull-request-github",
+				// Python
+				"wholroyd.jinja",
+				"kevinrose.vsc-python-indent",
+				"njpwerner.autodocstring",
+				"batisteo.vscode-django",
+				"visualstudioexptteam.vscodeintellicode",
+				"visualstudioexptteam.intellicode-api-usage-examples",
+				"ms-python.python",
+				"ms-python.debugpy",
+				"donjayamanne.python-environment-manager",
+				"charliermarsh.ruff",
+				// Docker
+				"ms-azuretools.vscode-docker"
+			]
+		}
+	},
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	"remoteUser": "vscode"
+}

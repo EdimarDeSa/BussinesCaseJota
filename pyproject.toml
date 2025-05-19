@@ -34,13 +34,24 @@ pillow = "^11.2.1"
 django-celery-beat = "^2.8.0"
 
 
-[build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
-
 [tool.poetry.group.dev.dependencies]
-black = "^25.1.0"
-isort = "^6.0.1"
-mypy = "^1.15.0"
 faker = "^37.1.0"
 
+[dependency-groups]
+celery = [
+    "django-celery-beat>=2.8.1",
+]
+dev = [
+    "faker>=37.3.0",
+    "poetry>=2.1.3",
+]
+web = [
+    "djangorestframework>=3.16.0",
+    "djangorestframework-simplejwt[crypto]>=5.5.0",
+    "drf-spectacular>=0.28.0",
+    "gunicorn>=23.0.0",
+    "pillow>=11.2.1",
+]
+worker = [
+    "pillow>=11.2.1",
+]
