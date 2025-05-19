@@ -1,8 +1,4 @@
-from datetime import datetime, timedelta
-from typing import Any
-
 from django.urls import include, path
-from django.utils import timezone
 from faker import Faker
 from rest_framework import status
 from rest_framework.test import APITestCase, URLPatternsTestCase
@@ -10,17 +6,13 @@ from rest_framework.test import APITestCase, URLPatternsTestCase
 from ..enums.plan_enum import PlanEnum
 from ..enums.user_role_enum import UserRoleEnum
 from ..enums.vertical_enum import VerticalEnum
-from ..models import UserSchema
-from ..serializers.user_plan_serializer import UserPlanSerializer
-from ..serializers.user_serializer import UserSerializer
-from ..views.user_plan_view import UserPlanViewSet
 from .aux_funcs import create_user
 
 
 class TestUserPlan(APITestCase, URLPatternsTestCase):
-    urlpatterns = [
+    urlpatterns = (
         path("api/", include("api_portal_jota.urls")),
-    ]
+    )
 
     def setUp(self) -> None:
         self.faker = Faker("pt_BR")
