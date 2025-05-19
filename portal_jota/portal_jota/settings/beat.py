@@ -3,7 +3,6 @@ from datetime import timedelta
 from celery.schedules import crontab
 from django.conf import settings
 
-from .base import *
 from .celery import *
 
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"

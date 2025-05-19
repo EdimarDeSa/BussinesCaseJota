@@ -1,6 +1,5 @@
 from django.conf import settings
 
-from .base import *
 from .beat import *
 from .celery import *
 

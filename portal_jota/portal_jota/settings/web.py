@@ -1,7 +1,6 @@
 import os
 from datetime import timedelta
 
-from .base import *
 from .base import BASE_DIR, INSTALLED_APPS  # Para evitar erro de linter
 from .celery import *
 
@@ -11,7 +10,7 @@ INSTALLED_APPS.extend(
         "rest_framework",
         "drf_spectacular",
         "rest_framework_simplejwt",
-    ]
+    ],
 )
 
 MIDDLEWARE = [

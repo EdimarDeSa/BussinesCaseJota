@@ -1,6 +1,5 @@
 from typing import Any
 
-from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from ..enums.plan_enum import PlanEnum
@@ -26,7 +25,7 @@ class UserPlanSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserPlanSchema
 
-        fields = [
+        fields = (
             "id",
             "plan",
             "user_id",
@@ -34,12 +33,12 @@ class UserPlanSerializer(serializers.ModelSerializer):
             "verticais",
             "created_at",
             "updated_at",
-        ]
+        )
 
-        read_only_fields = ["id", "created_at", "updated_at"]
+        read_only_fields = ("id", "created_at", "updated_at")
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
-        plan_label = attrs.get("plan", None)
+        plan_label = attrs.get("plan")
 
         if plan_label is not None:
             plan = PlanEnum.from_label(plan_label)
@@ -66,5 +65,5 @@ class UserPlanSerializer(serializers.ModelSerializer):
     def to_representation(self, instance: UserPlanSchema) -> dict:
         data = super().to_representation(instance)
         data["verticais"] = [v.name for v in instance.verticais.all()]
-        data["plan"] = instance.get_plan_display()
+        data["plan"] = instance.get_plan_display()  # type: ignore
         return data

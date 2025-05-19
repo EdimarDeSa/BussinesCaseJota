@@ -1,6 +1,5 @@
 import os
 
-from .base import *
 from .base import TIME_ZONE  # Para evitar erro de linter
 
 # Configurações do Celery/RabbitMQ
