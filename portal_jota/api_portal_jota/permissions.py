@@ -2,7 +2,7 @@ from rest_framework.permissions import BasePermission
 from rest_framework.request import Request
 
 from .enums.user_role_enum import UserRoleEnum
-from .models.user_schema import UserSchema
+from .models.noticia_schema import NoticiaSchema
 
 
 class IsAdmin(BasePermission):
@@ -36,10 +36,10 @@ class IsEditorOrAdmin(BasePermission):
     def has_permission(self, request: Request, view: object) -> bool:
         is_auth = request.user.is_authenticated
         user_role = request.user.role if is_auth else None
-        has_role = user_role in [UserRoleEnum.EDITOR, UserRoleEnum.ADMIN]
+        has_role = user_role in {UserRoleEnum.EDITOR, UserRoleEnum.ADMIN}
         return all([is_auth, has_role])
 
-    def has_object_permission(self, request: Request, view: object, obj: UserSchema) -> bool:
+    def has_object_permission(self, request: Request, view: object, obj: NoticiaSchema) -> bool:
         is_admin = request.user.role == UserRoleEnum.ADMIN
         is_autor = obj.autor == request.user
         return any([is_admin, is_autor])
