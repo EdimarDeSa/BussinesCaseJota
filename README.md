@@ -10,7 +10,6 @@ Bussines case para vaga de Desenvolvedor Backend na Jota
   - [Instalação e Execução em desenvolvimento](#instalação-e-execução-em-desenvolvimento)
     - [Requisitos](#requisitos)
     - [Instalação](#instalação)
-  - [Instalação e Execução em produção](#instalação-e-execução-em-produção)
   - [Melhorias e sugestões](#melhorias-e-sugestões)
 
 ## Descrição doBusiness Case
@@ -36,10 +35,10 @@ Documentação oficial: [Google Doc](https://docs.google.com/document/d/1wHMVlLk
 | Processamento assincrono de imagens | **OK** |
 | Envio de emails de notificações | **OK** |
 | Implementação de Swagger | **OK** |
-| Implementação de GitHub Actions | Em desenvolvimento |
+| Implementação de GitHub Actions | **OK** |
 | Implementação de testes | **OK** |
-| Implementação de Docker | Em desenvolvimento |
-| Implementação de Docker Compose | Em desenvolvimento |
+| Implementação de Docker | **OK** |
+| Implementação de Docker Compose | **OK** |
 | --- | --- |
 | **Status global** | **EM REVISÃO** |
 
@@ -157,8 +156,6 @@ ou para docker compose < 2.0
   python manage.py runserver
 ```
 
-## Instalação e Execução em produção
-
 ## Melhorias e sugestões
 - Melhorias de armazenamento
   - Definir um armazenamento externo para imagens
@@ -173,3 +170,5 @@ ou para docker compose < 2.0
   - Adicionar tabela para metadados de visualização e compartilhamento
 - Acesso e planos
   - Acesso diferenciado para leitores sem cadastro (Atualmente não tem acesso a nenhuma noticia)
+- Melhorias para ambiente de produção
+  - Verificar o ambiente em que deverá ser utilizado (ubuntu, Fedora, Arch, ...)
