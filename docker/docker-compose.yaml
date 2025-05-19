@@ -27,6 +27,7 @@ services:
       - portal_jota_postgres_network
     ports:
       - 5432:5432
+    restart: always
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 5s
@@ -47,6 +48,7 @@ services:
       - portal_jota_redis_network
     ports:
       - 6379:6379
+    restart: always
     entrypoint: ["/entrypoint.sh"]
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -67,6 +69,7 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+    restart: always
     depends_on:
       redis:
         condition: service_healthy
