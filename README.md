@@ -141,8 +141,11 @@ Sugestão para criação das senhas:
 ou para docker compose < 2.0
 ```bash
   docker-compose -f docker/docker-compose.yaml up -d postgres redis rabbitmq
-```	
-
+```
+- Realizar migrações do banco de dados
+```
+  python manage.py makemigrations && python manage.py migrate
+```
 - Realizar testes
 ```bash
   cd portal_jota
@@ -152,7 +155,6 @@ ou para docker compose < 2.0
 
 - Iniciar webserver
 ```bash
-  python manage.py makemigrations && python manage.py migrate
   python manage.py runserver
 ```
 
