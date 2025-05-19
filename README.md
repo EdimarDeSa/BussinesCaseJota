@@ -144,11 +144,12 @@ ou para docker compose < 2.0
 ```
 - Realizar migrações do banco de dados
 ```
+  cd portal_jota
+
   python manage.py makemigrations && python manage.py migrate
 ```
 - Realizar testes
 ```bash
-  cd portal_jota
 
   python manage.py test
 ```
